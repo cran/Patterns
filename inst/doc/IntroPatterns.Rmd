@@ -2,7 +2,7 @@
 title: "Introduction to Patterns: a modeling tool dedicated to biological network modeling"
 shorttitle: "Patterns: biological network modeling"
 author: 
-- name: "Frédéric Bertrand"
+- name: "Frédéric Bertrand and Myriam Maumy-Bertrand"
   affiliation: 
   - Université de Strasbourg et CNRS
   - IRMA, labex IRMIA
@@ -502,7 +502,8 @@ evolution(network,sequence,type.ani = "html")
 
 Evolution of some properties of a reverse-engineered network with increasing cut-off values.
 ```{r compare, warning=FALSE, eval = LOCAL}
-data(simul)
+data(Net)
+data(Net_inf_PL)
 
 #Comparing true and inferred networks
 Crit_values=NULL
