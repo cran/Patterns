@@ -1,4 +1,4 @@
-## ----setup, include = FALSE----------------------------------------------
+## ----setup, include = FALSE---------------------------------------------------
 LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
 knitr::opts_chunk$set(purl = LOCAL)
 knitr::opts_chunk$set(

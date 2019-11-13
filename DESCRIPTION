@@ -2,8 +2,8 @@ Package: Patterns
 Type: Package
 Title: Deciphering Biological Networks with Patterned Heterogeneous
         Measurements
-Version: 1.1
-Date: 2019-08-24
+Version: 1.2
+Date: 2019-11-13
 Depends: R (>= 3.5.0)
 biocViews:
 Imports: abind, animation, Biobase, c060, cluster, elasticnet, glmnet,
@@ -30,6 +30,6 @@ URL: http://www-irma.u-strasbg.fr/~fbertran/,
         https://github.com/fbertran/Patterns
 BugReports: https://github.com/fbertran/Patterns/issues
 NeedsCompilation: no
-Packaged: 2019-08-24 00:23:48 UTC; fbertran
+Packaged: 2019-11-13 22:03:32 UTC; fbertran
 Repository: CRAN
-Date/Publication: 2019-08-24 04:20:02 UTC
+Date/Publication: 2019-11-13 22:30:03 UTC
