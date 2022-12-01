@@ -14,14 +14,14 @@ knitr::opts_chunk$set(
 ## ---- eval = FALSE------------------------------------------------------------
 #  devtools::install_github("fbertran/Patterns")
 
-## ----microarrayclass, message=FALSE, warning=FALSE, eval = LOCAL--------------
+## ----omicsarrayclass, message=FALSE, warning=FALSE, eval = LOCAL--------------
 library(Patterns)
 if(!require(CascadeData)){install.packages("CascadeData")}
 data(micro_US)
-micro_US<-as.micro_array(micro_US[1:100,],time=c(60,90,210,390),subject=6)
+micro_US<-as.omics_array(micro_US[1:100,],time=c(60,90,210,390),subject=6)
 str(micro_US)
 
-## ----plotmicroarrayclass, fig.keep='all', eval = LOCAL------------------------
+## ----plotomicsarrayclass, fig.keep='all', eval = LOCAL------------------------
 summary(micro_US)
 plot(micro_US)
 
@@ -82,7 +82,7 @@ plot(Net, choice="Fpixmap")
 ## ----genesimul, message=FALSE, warning=FALSE, eval = LOCAL--------------------
 set.seed(1)
 M <- Patterns::gene_expr_simulation(
-  network=Net,
+  omics_network=Net,
   time_label=rep(1:4,each=25),
   subject=5,
   peak_level=200,
@@ -102,7 +102,7 @@ Net_inf_P <- Patterns::inference(M, cv.subjects=TRUE)
 plot(Net_inf_P, choice="F")
 
 ## ----heatresults, eval = LOCAL------------------------------------------------
-stats::heatmap(Net_inf_P@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----Finitshow, eval = LOCAL--------------------------------------------------
 Ti<-4;
@@ -157,7 +157,7 @@ Net_inf_P_S <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFsh
 plot(Net_inf_P_S, choice="F")
 
 ## ----heatresultsLC, fig.keep="none", eval = LOCAL-----------------------------
-stats::heatmap(Net_inf_P_S@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_S@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinflasso2, cache=TRUE, fig.keep="none", eval = LOCAL------------------
 Net_inf_P_Lasso2 <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="LASSO2")
@@ -166,12 +166,12 @@ Net_inf_P_Lasso2 <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=Casca
 plot(Net_inf_P_Lasso2, choice="F")
 
 ## ----heatresultslasso2, fig.keep="none", eval = LOCAL-------------------------
-stats::heatmap(Net_inf_P_Lasso2@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_Lasso2@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfPriors, eval = LOCAL-----------------------------------------------
-Weights_Net=slot(Net,"network")
-Weights_Net[Net@network!=0]=.1        
-Weights_Net[Net@network==0]=1000
+Weights_Net=slot(Net,"omics_network")
+Weights_Net[Net@omics_network!=0]=.1        
+Weights_Net[Net@omics_network==0]=1000
 
 ## ----netinflasso2Weighted, cache=TRUE, fig.keep="none", eval = LOCAL----------
 Net_inf_P_Lasso2_Weighted <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="LASSO2", priors=Weights_Net)
@@ -180,7 +180,7 @@ Net_inf_P_Lasso2_Weighted <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fsh
 plot(Net_inf_P_Lasso2_Weighted, choice="F")
 
 ## ----heatresultslasso2Weighted, fig.keep="none", eval = LOCAL-----------------
-stats::heatmap(Net_inf_P_Lasso2_Weighted@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_Lasso2_Weighted@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfSPLS, cache=TRUE, fig.keep="none", eval = LOCAL--------------------
 Net_inf_P_SPLS <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="SPLS")
@@ -189,7 +189,7 @@ Net_inf_P_SPLS <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=Cascade
 plot(Net_inf_P_SPLS, choice="F")
 
 ## ----heatresultsSPLS, fig.keep="none", eval = LOCAL---------------------------
-stats::heatmap(Net_inf_P_SPLS@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_SPLS@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfEN, cache=TRUE, fig.keep="none", eval = LOCAL----------------------
 Net_inf_P_ELASTICNET <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="ELASTICNET")
@@ -198,7 +198,7 @@ Net_inf_P_ELASTICNET <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=C
 plot(Net_inf_P_ELASTICNET, choice="F")
 
 ## ----heatresultsEN, fig.keep="none", eval = LOCAL-----------------------------
-stats::heatmap(Net_inf_P_ELASTICNET@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_ELASTICNET@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfStab, cache=TRUE, fig.keep="none", eval = LOCAL--------------------
 Net_inf_P_stability <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="stability.c060")
@@ -207,7 +207,7 @@ Net_inf_P_stability <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=Ca
 plot(Net_inf_P_stability, choice="F")
 
 ## ----heatresultsStab, fig.keep="none", eval = LOCAL---------------------------
-stats::heatmap(Net_inf_P_stability@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_stability@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfStabWeight, cache=TRUE, fig.keep="none", eval = LOCAL--------------
 Net_inf_P_StabWeight <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="stability.c060.weighted", priors=Weights_Net)
@@ -216,7 +216,7 @@ Net_inf_P_StabWeight <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=C
 plot(Net_inf_P_StabWeight, choice="F")
 
 ## ----heatresultsStabWeight, fig.keep="none", eval = LOCAL---------------------
-stats::heatmap(Net_inf_P_StabWeight@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_StabWeight@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfRobust, cache=TRUE, fig.keep="none", eval = LOCAL------------------
 Net_inf_P_Robust <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="robust")
@@ -225,7 +225,7 @@ Net_inf_P_Robust <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=Casca
 plot(Net_inf_P_Robust, choice="F")
 
 ## ----heatresultsRobust, fig.keep="none", eval = LOCAL-------------------------
-stats::heatmap(Net_inf_P_Robust@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_Robust@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfSB, cache=TRUE, fig.keep="none", eval = LOCAL----------------------
 Weights_Net_1 <- Weights_Net
@@ -240,7 +240,7 @@ library(Patterns)
 plot(Net_inf_P_SelectBoost, choice="F")
 
 ## ----heatresultsSB, fig.keep="none", eval = LOCAL-----------------------------
-stats::heatmap(Net_inf_P_SelectBoost@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_SelectBoost@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----netinfSBW, cache=TRUE, fig.keep="none", eval = LOCAL---------------------
 Net_inf_P_SelectBoostWeighted <- Patterns::inference(M, Finit=CascadeFinit(4,4), Fshape=CascadeFshape(4,4), fitfun="selectboost.weighted",priors=Weights_Net)
@@ -253,7 +253,7 @@ library(Patterns)
 plot(Net_inf_P_SelectBoostWeighted, choice="F")
 
 ## ----heatresultsSBW, fig.keep="none", eval = LOCAL----------------------------
-stats::heatmap(Net_inf_P_SelectBoostWeighted@network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
+stats::heatmap(Net_inf_P_SelectBoostWeighted@omics_network, Rowv = NA, Colv = NA, scale="none", revC=TRUE)
 
 ## ----evolution, warning=FALSE, eval=FALSE-------------------------------------
 #  data(network)
@@ -269,7 +269,7 @@ data(Net_inf_PL)
 Crit_values=NULL
 
 #Here are the cutoff level tested
-test.seq<-seq(0,max(abs(Net_inf_PL@network*0.9)),length.out=200)
+test.seq<-seq(0,max(abs(Net_inf_PL@omics_network*0.9)),length.out=200)
 for(u in test.seq){
 	Crit_values<-rbind(Crit_values,Patterns::compare(Net,Net_inf_PL,u))
 }
@@ -288,36 +288,36 @@ analyze_network(networkCascade,nv=0.133)
 data(Selection)
 plot(networkCascade,nv=0.133, gr=Selection@group)
 
-## ----microselection, warning=FALSE, cache=FALSE, eval = LOCAL-----------------
+## ----omicsselection, warning=FALSE, cache=FALSE, eval = LOCAL-----------------
 library(Patterns)
 library(CascadeData)
 data(micro_S)
-micro_S<-as.micro_array(micro_S,time=c(60,90,210,390),subject=6,gene_ID=rownames(micro_S))
+micro_S<-as.omics_array(micro_S,time=c(60,90,210,390),subject=6,gene_ID=rownames(micro_S))
 data(micro_US)
-micro_US<-as.micro_array(micro_US,time=c(60,90,210,390),subject=6,gene_ID=rownames(micro_US))
+micro_US<-as.omics_array(micro_US,time=c(60,90,210,390),subject=6,gene_ID=rownames(micro_US))
 
-## ----microselection1, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
+## ----omicsselection1, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
 Selection1<-Patterns::geneSelection(x=micro_S,y=micro_US,20,wanted.patterns=rbind(c(0,1,0,0),c(1,0,0,0),c(1,1,0,0)))
 
-## ----microselection2, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
+## ----omicsselection2, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
 Selection2<-geneSelection(x=micro_S,y=micro_US,20,peak=1)
 
-## ----microselection3, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
+## ----omicsselection3, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
 Selection3<-geneSelection(x=micro_S,y=micro_US,20,peak=2)
 
-## ----microselection4, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
+## ----omicsselection4, warning=FALSE, cache=TRUE, eval = LOCAL-----------------
 Selection4<-geneSelection(x=micro_S,y=micro_US,50,
 wanted.patterns=rbind(c(0,0,1,0),c(0,0,0,1),c(1,1,0,0)))
 
-## ----microselection5, warning=FALSE, eval = LOCAL-----------------------------
-Selection<-unionMicro(Selection1,Selection2)
-Selection<-unionMicro(Selection,Selection3)
-Selection<-unionMicro(Selection,Selection4)
+## ----omicsselection5, warning=FALSE, eval = LOCAL-----------------------------
+Selection<-unionOmics(Selection1,Selection2)
+Selection<-unionOmics(Selection,Selection3)
+Selection<-unionOmics(Selection,Selection4)
 head(Selection)
 
-## ----microselection6, warning=FALSE, fig.keep="none", eval = LOCAL------------
+## ----omicsselection6, warning=FALSE, fig.keep="none", eval = LOCAL------------
 summary(Selection)
 
-## ----microselection7, warning=FALSE, fig.keep="none", eval = LOCAL------------
+## ----omicsselection7, warning=FALSE, fig.keep="none", eval = LOCAL------------
 plot(Selection)
 

@@ -8,9 +8,9 @@
 #' 
 #' 
 #' @aliases predict predict-methods predict,ANY-method
-#' predict,micro_array-method
-#' @param object a micro_array object.
-#' @param Omega a network object.
+#' predict,omics_array-method
+#' @param object a omics_array object.
+#' @param Omega a omics_network object.
 #' @param act_time_group [NULL] vector; at which time the groups (defined by sort(unique(group))) are activated ?
 #' @param nv [=0] numeric ; the level of the cutoff
 #' @param targets [NULL] vector ; which genes are knocked out ?
@@ -48,7 +48,7 @@
 #' }
 #' 
 setMethod("predict"
-          , c("micro_array")
+          , c("omics_array")
           , function(object
                      ,
                      Omega
@@ -62,30 +62,30 @@ setMethod("predict"
                      adapt = TRUE) {
             #            require(magic)
             
-            micro <- object
+            omics <- object
             if (!is.null(targets)) {
-              micro@microarray[targets, ] <- 0
+              omics@omicsarray[targets, ] <- 0
             }
             if (is.null(act_time_group)) {
               stop("Cluster activation times must be provided in the act_time_group numeric vector.")
             }
             #groups
-            groupe <- micro@group
+            groupe <- omics@group
             #measurements
-            #M <- micro@microarray
+            #M <- omics@omicsarray
             #number of timepoints
-            T <- length(micro@time)
+            T <- length(omics@time)
             #gene groups
-            gr <- micro@group
+            gr <- omics@group
             
             #group vector
             ngrp <- length(unique(gr))
             vgrp <- sort(unique(gr))
             
-            if (all(micro@gene_ID == 0)) {
+            if (all(omics@gene_ID == 0)) {
               gene <- 1:length(groupe)
             } else {
-              gene <- micro@gene_ID
+              gene <- omics@gene_ID
             }
             gene2 <- gene
             #Naming groupe vector for easy retrieving of group membership
@@ -101,21 +101,21 @@ setMethod("predict"
               gene <- gene[-targets]
             }
             #Links
-            O <- Omega@network
+            O <- Omega@omics_network
             #Cutoff
             O[abs(O) < nv] <- 0
             colnames(O) <- gene2
             rownames(O) <- gene2
             #F matrix
             F <- Omega@F
-            microP <- micro
+            omicsP <- omics
             #predictors
             sup_pred <-
-              rep(1:T, micro@subject) + rep(seq(0, T * (micro@subject - 1), T), each =
+              rep(1:T, omics@subject) + rep(seq(0, T * (omics@subject - 1), T), each =
                                               T)
             
             
-            micro2 <- micro
+            omics2 <- omics
             #F matrix index
             u <- 0
             
@@ -129,16 +129,16 @@ setMethod("predict"
                 IND <- which(groupe[gene2] %in% vgrp[act_time_group < peak])
                 grIND <- groupe[IND]
                 if (!is.null(targets)) {
-                  micro2@microarray[targets, ] <- micro@microarray[targets, ]
+                  omics2@omicsarray[targets, ] <- omics@omicsarray[targets, ]
                 }
-                pred <- micro2@microarray[IND, sup_pred]
+                pred <- omics2@omicsarray[IND, sup_pred]
                 for (k in (1:ngrp)[-grpjj]) {
                   ind <- which(grIND %in% k)
                   f <-
                     function(x) {
                       (F[, , grpjj + (k - 1) * ngrp] %*% (x))
                     }
-                  for (i in 1:micro@subject) {
+                  for (i in 1:omics@subject) {
                     pred[ind, 1:T + (i - 1) * T] <-
                       t(apply(pred[ind, 1:T + (i - 1) * T, drop = FALSE], 1, f))
                   }
@@ -148,7 +148,7 @@ setMethod("predict"
                 for (j in gene[IND2]) {
                   predj <- pred[O[IND, j] != 0, ]
                   if (length(predj) != 0) {
-                    Y <- micro@microarray[j, sup_pred]
+                    Y <- omics@omicsarray[j, sup_pred]
                     if (adapt == TRUE) {
                       if (!is.null(dim(predj))) {
                         mm <- lm(Y ~ t(predj) - 1)
@@ -156,19 +156,19 @@ setMethod("predict"
                       else{
                         mm <- lm(Y ~ (predj) - 1)
                       }
-                      micro2@microarray[j, sup_pred] <- predict(mm)
+                      omics2@omicsarray[j, sup_pred] <- predict(mm)
                       O[IND, j][O[IND, j] != 0] <- coef(mm)[]
                     }
                   }
                   else{
                     predj <- apply((pred) * O[IND, j], 2, sum)
-                    micro2@microarray[j, sup_pred] <- predj[sup_pred]
+                    omics2@omicsarray[j, sup_pred] <- predj[sup_pred]
                   }
                   
                 }
               }
             }
-            micro33 <- micro2
+            omics33 <- omics2
             if (!is.null(targets)) {
               pppp <-
                 unique(unlist(geneNeighborhood(Omega, targets, nv, graph = FALSE)))
@@ -177,7 +177,7 @@ setMethod("predict"
               genes3 <- gene2
             }
             if (!is.null(targets)) {
-              micro33@microarray[genes3, ] <- micro@microarray[genes3, ]
+              omics33@omicsarray[genes3, ] <- omics@omicsarray[genes3, ]
             }
             
             if (is.null(targets)) {
@@ -196,22 +196,22 @@ setMethod("predict"
             expr <- rep("log(S/US)", subjects * ntimes)
             nomscol <- paste(expr, ":", indicateurs)
             
-            colnames(object@microarray) <- nomscol
-            colnames(micro@microarray) <- nomscol
-            colnames(micro33@microarray) <- nomscol
+            colnames(object@omicsarray) <- nomscol
+            colnames(omics@omicsarray) <- nomscol
+            colnames(omics33@omicsarray) <- nomscol
             return(
               new(
-                "micropredict"
+                "omics_predict"
                 ,
-                microarray_unchanged = object
+                omicsarray_unchanged = object
                 ,
-                microarray_changed = micro
+                omicsarray_changed = omics
                 ,
-                microarray_predict = micro33
+                omicsarray_predict = omics33
                 ,
                 nv = nv
                 ,
-                network = Omega
+                omics_network = Omega
                 ,
                 targets = targets
               )
@@ -248,8 +248,8 @@ setMethod("predict"
 #' to sum to the number of variables.
 #' 
 #' @name inference
-#' @aliases inference inference-methods inference,micro_array-method
-#' @param M a micro_array object.
+#' @aliases inference inference-methods inference,omics_array-method
+#' @param M a omics_array object.
 #' @param tour.max [30] tour.max + 1 = maximal number of steps.
 #' @param g After each step, the new solution is choosen as (the
 #' old solution + g(x) * the new solution)/(1+g(x)) where x is the number of
@@ -279,7 +279,7 @@ setMethod("predict"
 #' @param use.parallel [TRUE] Use parallel computing?
 #' @param verbose [TRUE] Info on the completion of the fitting process
 #' @param show.error.messages [FALSE] Should the error messages of the Omega estimating function be returned?
-#' @return A network object.
+#' @return A omics_network object.
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods
 #' @examples
@@ -310,7 +310,7 @@ setMethod("predict"
 #' }
 #' 
 setMethod(f="inference"
-          ,signature=c("micro_array")
+          ,signature=c("omics_array")
           ,definition=function(M
                                ,tour.max=30
                                ,g=function(x){1/x}
@@ -337,7 +337,7 @@ setMethod(f="inference"
                                ){
 
             require(nnls, quietly = TRUE, warn.conflicts = FALSE);on.exit(unloadNamespace("package:nnls"))
-            mat<-M@microarray
+            mat<-M@omicsarray
             
             if(is.null(priors)) priors<-matrix(1,nrow(mat),nrow(mat))
             if(!is.matrix(priors)) stop("priors should be a matrix")
@@ -617,7 +617,7 @@ setMethod(f="inference"
                       
                       glmnet.subset.weighted <- function (index, subsets, x, y, lambda, penalty.factor, weakness, p, ...) 
                       {
-                        if (length(dim(y)) == 2 | class(y) == "Surv") {
+                        if (length(dim(y)) == 2 | inherits(y, "Surv")) {
                           glmnet::glmnet(x[subsets[, index], ], y[subsets[, index], ], 
                                          lambda = lambda, penalty.factor = penalty.factor*1/runif(p, weakness, 1), ...)$beta != 0
                         }
@@ -859,8 +859,8 @@ setMethod(f="inference"
             else{
               F<-sauvF   
             }
-            result<-new("network"
-                        ,network=Omega
+            result<-new("omics_network"
+                        ,omics_network=Omega
                         ,name=M@name
                         ,F=F
                         ,convF=convF
@@ -872,19 +872,19 @@ setMethod(f="inference"
 )
 
 
-#' Simulates microarray data based on a given network.
+#' Simulates omicsarray data based on a given network.
 #' 
-#' Simulates microarray data based on a given network.
+#' Simulates omicsarray data based on a given network.
 #' 
 #' 
 #' @aliases gene_expr_simulation gene_expr_simulation-methods
-#' gene_expr_simulation,network-method
-#' @param network A network object.
+#' gene_expr_simulation,omics_network-method
+#' @param omics_network A omics_network object.
 #' @param time_label a vector containing the time labels.
 #' @param subject the number of subjects
 #' @param peak_level the mean level of peaks.
 #' @param act_time_group  [NULL] vector ; at which time the groups (defined by sort(unique(group))) are activated ?
-#' @return A micro_array object.
+#' @return A omics_array object.
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @examples
 #' 
@@ -893,15 +893,15 @@ setMethod(f="inference"
 #' 
 #' #We simulate gene expressions according to the network Net
 #' Msim<-Patterns::gene_expr_simulation(
-#' 	network=Net,
+#' 	omics_network=Net,
 #' 	time_label=rep(1:4,each=25),
 #' 	subject=5,
 #' 	peak_level=200)
 #' head(Msim)
 #' 
 setMethod("gene_expr_simulation"
-          ,"network"
-          ,function(network
+          ,"omics_network"
+          ,function(omics_network
                     ,time_label=1:4
                     ,subject=5
                     ,peak_level=100
@@ -909,8 +909,8 @@ setMethod("gene_expr_simulation"
           ){
             require(VGAM)
             
-            N<-network@network
-            M<-matrix(0,dim(network@network)[1],length(unique(time_label))*subject)
+            N<-omics_network@omics_network
+            M<-matrix(0,dim(omics_network@omics_network)[1],length(unique(time_label))*subject)
             T<-length(unique(time_label))
             gene1<-which(time_label==1)
             supp<-seq(1,dim(M)[2],by=length(unique(time_label)))
@@ -935,14 +935,14 @@ setMethod("gene_expr_simulation"
               
             }
             
-            MM<-as.micro_array(M,1:length(unique(time_label)),subject)
+            MM<-as.omics_array(M,1:length(unique(time_label)),subject)
             MM@group<-time_label
             
             
             
-            G<-Patterns::predict(MM,Omega=network,act_time_group=act_time_group)@microarray_predict #Before Cascade 1.03, we have G<-predict(MM,network,adapt=FALSE)@microarray_predict
+            G<-Patterns::predict(MM,Omega=omics_network,act_time_group=act_time_group)@omicsarray_predict
             supp<-seq(1,dim(M)[2],by=length(unique(time_label)))
-            G@microarray[,supp]<-M[, supp]	
+            G@omicsarray[,supp]<-M[, supp]	
             return(G)
           }
 )

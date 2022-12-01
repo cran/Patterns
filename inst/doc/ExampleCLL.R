@@ -24,11 +24,11 @@ hea_S<-CLL[,which(!((1:48)%%8<5&(1:48)%%8>0))+2]
 agg_US<-CLL[,which((1:40)%%8<5&(1:40)%%8>0)+98]
 agg_S<-CLL[,which(!((1:40)%%8<5&(1:40)%%8>0))+98]
 
-m_hea_US<-as.micro_array(hea_US,c(60,90,210,390),6,name=CLL[,1],gene_ID=CLL[,2])
-m_hea_S<- as.micro_array(hea_S,c(60,90,210,390),6,name=CLL[,1],gene_ID=CLL[,2])
+m_hea_US<-as.omics_array(hea_US,c(60,90,210,390),6,name=CLL[,1],gene_ID=CLL[,2])
+m_hea_S<- as.omics_array(hea_S,c(60,90,210,390),6,name=CLL[,1],gene_ID=CLL[,2])
   
-m_agg_US<-as.micro_array((agg_US),c(60,90,210,390),5,name=CLL[,1],gene_ID=CLL[,2])
-m_agg_S<- as.micro_array((agg_S),c(60,90,210,390),5,name=CLL[,1],gene_ID=CLL[,2])
+m_agg_US<-as.omics_array((agg_US),c(60,90,210,390),5,name=CLL[,1],gene_ID=CLL[,2])
+m_agg_S<- as.omics_array((agg_S),c(60,90,210,390),5,name=CLL[,1],gene_ID=CLL[,2])
 
 ## ----focusEGR1, warning=FALSE, cache=TRUE, fig.keep="none", eval = LOCAL------
 matplot(t(log(agg_S[which(CLL[,2] %in% "EGR1"),])),type="l",lty=1)
@@ -46,7 +46,7 @@ selection3<-geneSelection(list(m_agg_US,m_agg_S),list("condition&time",c(1,2),c(
 selection4<-geneSelection(list(m_agg_US,m_agg_S),list("condition&time",c(1,2),c(1,1)+3),50,alpha=0.005)
 
 ## ----mergeselection, warning=FALSE, fig.keep='first', eval = LOCAL------------
-selection<-Patterns::unionMicro(list(selection1,selection2,selection3,selection4))
+selection<-Patterns::unionOmics(list(selection1,selection2,selection3,selection4))
 summary(selection)
 
 ## ----sizemergeselection, warning=FALSE, cache=TRUE, eval = LOCAL--------------
@@ -96,10 +96,10 @@ infos_selection <- infos[infos$affy_hg_u133_plus_2 %in% selection@name,]
 tfs<-which(infos_selection[,"hgnc_symbol"] %in% TF)
 
 ## ----plotTFinsel, warning=FALSE, eval = LOCAL---------------------------------
-matplot(t(selection@microarray[tfs,]),type="l",lty=1)
+matplot(t(selection@omicsarray[tfs,]),type="l",lty=1)
 
 ## ----plotTFinsel2, warning=FALSE, eval = LOCAL--------------------------------
-kk<-kmeans((selection@microarray[tfs,]),10)
+kk<-kmeans((selection@omicsarray[tfs,]),10)
 matplot(t(kk$centers),type="l",lty=1)
 
 ## ----TODO, warning=FALSE, echo=FALSE, eval=FALSE------------------------------
@@ -145,7 +145,7 @@ matplot(t(kk$centers),type="l",lty=1)
 #  
 #  
 #  n<-40
-#  kre<-kmeans(selection@microarray,n)
+#  kre<-kmeans(selection@omicsarray,n)
 #  kre
 #  lll<-split(selection@gene_ID,kre$cluster)
 #  

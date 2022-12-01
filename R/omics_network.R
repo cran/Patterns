@@ -1,37 +1,35 @@
-
-
-
-setMethod("print", "network", function(x, ...) {
-  cat(
-    paste(
-      "This is a S4 class with : \n - (@network) a matrix of dimension ",
-      dim(x@network)[1],
-      "*",
-      dim(x@network)[2],
-      " .... [the network] \n - (@name) a vector of length ",
-      length(x@name),
-      " .... [gene names] \n",
-      "- (@F) a array of dimension ",
-      dim(x@F)[1],
-      "*",
-      dim(x@F)[2],
-      "*",
-      dim(x@F)[3],
-      " .... [F matrices] \n",
-      "- (@convF) a matrix of dimension ",
-      dim(x@convF)[1],
-      "*",
-      dim(x@convF)[2],
-      " .... [convergence (L1 norm) of array F] \n",
-      "- (@convO)a vector of length ",
-      length(x@convO),
-      " .... [convergence (L1 norm) of matrix Omega]\n",
-      "- (@time_pt) an vector of length",
-      length(x@time_pt),
-      "  .... [time points]"
-    )
+#' @rdname show-methods
+setMethod(f= "show", signature = "omics_network", definition = function(object) {
+cat(
+  paste(
+    "This is a S4 class with : \n - (@omics_network) a matrix of dimension ",
+    dim(object@omics_network)[1],
+    "*",
+    dim(object@omics_network)[2],
+    " .... [the omics_network] \n - (@name) a vector of length ",
+    length(object@name),
+    " .... [omics names] \n",
+    "- (@F) a array of dimension ",
+    dim(object@F)[1],
+    "*",
+    dim(object@F)[2],
+    "*",
+    dim(object@F)[3],
+    " .... [F matrices] \n",
+    "- (@convF) a matrix of dimension ",
+    dim(object@convF)[1],
+    "*",
+    dim(object@convF)[2],
+    " .... [convergence (L1 norm) of array F] \n",
+    "- (@convO)a vector of length ",
+    length(object@convO),
+    " .... [convergence (L1 norm) of matrix Omega]\n",
+    "- (@time_pt) an vector of length",
+    length(object@time_pt),
+    "  .... [time points]"
   )
-  invisible(x)
+)
+invisible(object)
 })
 
 #' Analysing the network
@@ -40,8 +38,8 @@ setMethod("print", "network", function(x, ...) {
 #' 
 #' 
 #' @aliases analyze_network analyze_network-methods
-#' analyze_network,network-method
-#' @param Omega a network object
+#' analyze_network,omics_network-method
+#' @param Omega a omics_network object
 #' @param nv the level of cutoff at which the analysis should be done
 #' @param label_v (optionnal) the name of the genes
 #' @return A matrix containing, for each node, its betweenness,its degree, its
@@ -53,13 +51,13 @@ setMethod("print", "network", function(x, ...) {
 #' data(network)
 #' analyze_network(network,nv=0)
 #' 
-setMethod("analyze_network", "network", function(Omega, nv, label_v = NULL) {
+setMethod("analyze_network", "omics_network", function(Omega, nv, label_v = NULL) {
   require(tnet)
   if (is.null(label_v)) {
-    label_v <- 1:dim(Omega@network)[1]
+    label_v <- 1:dim(Omega@omics_network)[1]
   }
-  O <- Omega@network
-  Omega <- Omega@network
+  O <- Omega@omics_network
+  Omega <- Omega@omics_network
   O[abs(O) <= nv] <- 0
   G <- graph.adjacency(O, weighted = TRUE)
   get.edgelist(G) -> Q
@@ -87,15 +85,15 @@ setMethod("analyze_network", "network", function(Omega, nv, label_v = NULL) {
 #' \item html \item latex (requires latex) \item swf (requires swftools)
 #' \item video (requires ffmpeg) \item gif \item manual_gif }
 #' 
-#' @aliases evolution evolution-methods evolution,network-method
-#' @param net a network object
+#' @aliases evolution evolution-methods evolution,omics_network-method
+#' @param net a omics_network object
 #' @param list_nv a vector of cutoff at which the network should be shown
 #' @param gr a vector giving the group of each genee. Defaults to NULL 
 #' @param color.vertex a vector giving the color of each nodee. Defaults to NULL 
 #' @param color.edge a vector giving the color of each edge. Defaults to NULL 
 #' @param fix logical, should the position of the node in the network be calculated once at the beginning ? Defaults to TRUE. 
 #' @param size vector giving the size of the plot. Defaults to c(2000,1000) 
-#' @param label_v vector giving the labels of each vertex. Defaults to 1:dim(net@network)[1] 
+#' @param label_v vector giving the labels of each vertex. Defaults to 1:dim(net@omics_network)[1] 
 #' @param legend string giving the position of the legend. Defaults to "topleft" 
 #' @param legend.position string giving the position of the legend. Defaults to "topleft" 
 #' @param frame.color string giving the color of the frame of the plot. Defaults to "black" 
@@ -115,13 +113,15 @@ setMethod("analyze_network", "network", function(Omega, nv, label_v = NULL) {
 #' destdir = tempdir()
 #' 
 #' #Example of use of the evolution method with an html output.
-#' evolution(network,sequence,type.ani = "html",outdir=destdir)
-#' 
-#' #Example of use of the evolution method with an animated gif output.
-#' evolution(network,sequence,type.ani = "gif",outdir=destdir)
+#' evolution(network,sequence,type.ani = "html", outdir=destdir)
 #' }
 #' 
-setMethod("evolution", "network", 
+#' \dontrun{
+#' #Example of use of the evolution method with an animated gif output.
+#' evolution(network,sequence,type.ani = "gif", outdir=destdir)
+#' }
+#' 
+setMethod("evolution", "omics_network", 
           function(net
                    ,
                    list_nv
@@ -136,7 +136,7 @@ setMethod("evolution", "network",
                    ,
                    size = c(2000, 1000)
                    ,
-                   label_v = 1:dim(net@network)[1]
+                   label_v = 1:dim(net@omics_network)[1]
                    ,
                    legend.position = "topleft"
                    ,
@@ -164,7 +164,7 @@ setMethod("evolution", "network",
                       Omega <- net
                      
                      if (length(list_nv) == 1) {
-                       list_nv = seq(0, max(net@network) - 0.05, length.out = list_nv)
+                       list_nv = seq(0, max(net@omics_network) - 0.05, length.out = list_nv)
                      }
                      
                      if (type.ani == "html") {
@@ -479,7 +479,7 @@ setMethod("evolution", "network",
                        POS <-
                          position(net, nv = list_nv[1])
                        if (is.null(gr)) {
-                         gr <- rep(1, dim(Omega@network)[1])
+                         gr <- rep(1, dim(Omega@omics_network)[1])
                        }
                        for (i in list_nv) {
                          plot(
@@ -519,17 +519,17 @@ setMethod("evolution", "network",
 #' Utility function to plot networks.
 #' 
 #' @name position-methods
-#' @aliases position position-methods position,network-method
+#' @aliases position position-methods position,omics_network-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
-#' \item{list("signature(net = \"network\")")}{ Returns a matrix with the
+#' \item{list("signature(net = \"omics_network\")")}{ Returns a matrix with the
 #' position of the node. This matrix can then be used as an argument in the
 #' plot function. } }
 #' 
-#' @param net a network object
+#' @param net a omics_network object
 #' @param nv the level of cutoff at which the analysis should be done
-#' @return Matrix with as many rows as the number of edges of network and three
+#' @return Matrix with as many rows as the number of edges of the network and three
 #' columns (name, xcoord, ycoord).
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods dplots
@@ -538,10 +538,10 @@ setMethod("evolution", "network",
 #' data(network)
 #' position(network)
 #' 
-setMethod("position", "network", function(net, nv = 0) {
+setMethod("position", "omics_network", function(net, nv = 0) {
   require(igraph, quietly = TRUE, warn.conflicts = FALSE);on.exit(unloadNamespace("package:igraph"))
-  O <- net@network
-  Omega <- net@network
+  O <- net@omics_network
+  Omega <- net@omics_network
   O[abs(O) <= nv] <- 0
   O[abs(O) > nv] <- 1
   
@@ -578,581 +578,14 @@ setMethod("position", "network", function(net, nv = 0) {
 #######################################
 #######################################
 
-#' @rdname plot-methods
-setMethod("plot"
-          , "network"
-          , function(x
-                     ,
-                     y
-                     ,
-                     choice = "network"
-                     ,
-                     nv = 0
-                     ,
-                     gr = NULL
-                     ,
-                     ini = NULL
-                     ,
-                     color.vertex = NULL
-                     ,
-                     color.edge = NULL
-                     ,
-                     video = TRUE
-                     ,
-                     weight.node = NULL
-                     ,
-                     ani = FALSE
-                     ,
-                     size = c(2000, 1000)
-                     ,
-                     label_v = 1:dim(x@network)[1]
-                     ,
-                     horiz = TRUE
-                     ,
-                     legend.position = "topleft"
-                     ,
-                     frame.color = "black"
-                     ,
-                     label.hub = FALSE
-                     ,
-                     nround = 2
-                     ,
-                     ani.img.name = "Rplot"
-                     ,
-                     ani.imgdir = "images"
-                     ,
-                     ani.htmlfile = "index.html"
-                     ,
-                     outdir
-                     ,
-                     ani.group.legend = "Cluster"
-                     ,
-                     layout = ini
-                     ,
-                     alpha = 1
-                     ,
-                     pixmap.color = terrain.colors(20)
-                     #,edge.arrow.size=0.6*(1+size.ed)
-                     #,edge.thickness=1
-                     ,
-                     ...)
-          {
-            if (choice == "F") {
-              require(plotrix, quietly = TRUE)
-              F <- x@F
-              sizeF <- dim(F)[1]
-              nF <- dim(F)[3]
-              ngrp = sqrt(dim(F)[3])
-              ymax <- max(F)
-              coloring <- rainbow(ngrp)
-              #  par(mfrow=c(ngrp,ngrp))
-              FF = NULL
-              for (i in 1:ngrp) {
-                FFa = NULL
-                for (j in 1:ngrp) {
-                  FFa = cbind(FFa, round(F[, , (i - 1) * ngrp + j], nround))
-                  #par(mai=c(0.1,0.1,0.1,0.1))
-                  #color2D.matplot(x=round(F[,,(i-1)*ngrp+j],2),cs1=c(0,1,1),cs2=c(1,1,0),cs3=0,show.values=TRUE,axes=FALSE,main="",xlab="",ylab="",show.legend=TRUE)
-                }
-                FF = rbind(FF, FFa)
-              }
-              par(
-                mar = c(0, 0, 0, 0),
-                oma = c(0, 0, 0, 0),
-                mai = c(0, 0, 0, 0)
-              )
-              color2D.matplot(
-                x = FF,
-                cs1 = c(0, .5, 1),
-                cs2 = c(.5, 1, 0),
-                cs3 = c(1, 2, 0),
-                show.values = nround,
-                axes = FALSE,
-                main = "",
-                xlab = "",
-                ylab = "",
-                show.legend = FALSE
-              )
-              abline(h = sizeF * (1:(ngrp - 1)), lwd = 3, col="grey50")
-              abline(v = sizeF * (1:(ngrp - 1)), lwd = 3, col="grey50")
-            }
-            if (choice == "Fpixmap") {
-              require(plotrix, quietly = TRUE)
-              F <- x@F
-              nF <- dim(F)[3]
-              ngrp = sqrt(dim(F)[3])
-              ymax <- max(F)
-              coloring <- rainbow(ngrp)
-              #  par(mfrow=c(ngrp,ngrp))
-              FF = NULL
-              for (i in 1:ngrp) {
-                FFa = NULL
-                for (j in 1:ngrp) {
-                  FFa = cbind(FFa, round(F[, , (i - 1) * ngrp + j], nround))
-                  #par(mai=c(0.1,0.1,0.1,0.1))
-                  #color2D.matplot(x=round(F[,,(i-1)*ngrp+j],2),cs1=c(0,1,1),cs2=c(1,1,0),cs3=0,show.values=TRUE,axes=FALSE,main="",xlab="",ylab="",show.legend=TRUE)
-                }
-                FF = rbind(FF, FFa)
-              }
-              par(
-                mar = c(0, 0, 0, 0),
-                oma = c(0, 0, 0, 0),
-                mai = c(0, 0, 0, 0)
-              )
-              x.temp <- pixmap::pixmapGrey(data = FF, cellres = c(2, 2))
-              plot(x.temp)
-              #              abline(h=4*(1:(ngrp-1)),lwd=3)
-              #              abline(v=4*(1:(ngrp-1)),lwd=3)
-              rm(x.temp)
-            }
-            if (choice == "network") {
-              coloring <- 0
-              O <- x@network
-              Omega <- x@network
-              O[abs(O) <= nv] <- 0
-              O[abs(O) > nv] <- 1
-              F <- x@F
-              nF <- dim(F)[3]
-              ngrp = sqrt(dim(F)[3])
-              
-              
-              
-              require(igraph, quietly = TRUE, warn.conflicts = FALSE);on.exit(unloadNamespace("package:igraph"))
-              if (is.null(gr)) {
-                gr <- rep(1, dim(O)[1])
-              }
-              if (is.null(color.vertex)) {
-                color.vertex <- rainbow(length(unique(gr)), alpha = alpha)
-              }
-              coloring <- 1
-              
-              nom <- 1:dim(O)[1]
-              enle <- which(apply(O, 1, sum) + apply(O, 2, sum) == 0)
-              if (length(enle) != 0) {
-                nom <- nom[-enle]
-                
-                O <- O[-enle, -enle]
-                
-                if (!is.null(weight.node)) {
-                  weight.node <- weight.node[-enle]
-                }
-              }
-              
-              if (!is.null(ini)) {
-                ini <- ini[which(ini[, 1] %in% nom), ]
-              }
-              #              nom2<-nom
-              nom2 <- label_v[nom]
-              if (!is.null(weight.node)) {
-                size <- weight.node
-              } else
-              {
-                size <- apply(O, 1, sum)
-              }
-              
-              size <- size / max(size) * 10
-              size[size < 2] <- 2
-              
-              if (label.hub == TRUE) {
-                nom2[which(size < 3)] <- NA
-              }
-              
-              
-              G <- igraph::graph.adjacency(O, weighted = TRUE)
-              
-              #    	if(.Platform$OS.type=="unix"){
-              #    get.edgelist(G)+1->Q
-              #    }else{
-              igraph::get.edgelist(G) -> Q
-              #    	}
-              Q[, 1] <- nom[Q[, 1]]
-              Q[, 2] <- nom[Q[, 2]]
-              size.ed <- rep(0, dim(Q)[1])
-              
-              for (i in 1:dim(Q)[1]) {
-                size.ed[i] <- abs(Omega[Q[i, 1], Q[i, 2]])
-              }
-              #fpl<-function(x){3*exp(8*x)/(14+exp(8*x))}
-              size.ed <- size.ed / max(size.ed)
-              #size.ed<-fpl(size.ed)
-              #size.ed<-size.ed
-
-              if (ani == TRUE) {
-                if(missing(outdir)){stop("An output directory is required")}
-                #We save the user working directory.
-                orig_working_directory <- getwd()
-                
-                #We restore the user working directory on function exit.
-                on.exit(setwd(orig_working_directory))
-                
-                #Set the working directory to the outdir directory
-                setwd(outdir)
-                
-                if (is.null(gr)) {stop("Need of groups")
-                }
-                T <- length(unique(gr))#length(x@time_pt)
-                require(animation)
-                animation::ani.options(ani.height = size[2],
-                                       ani.width = size[1])
-                
-                if (is.null(ini)) {
-                  ini <- position(x, nv)[]
-                }
-                
-                
-                #ini<-ini[which(ini[,1] %in% nom),]
-                ini <- ini[, 2:3]
-                gr2 <- gr[nom]
-                
-                animation::saveHTML({
-                  for (i in c(0.999, 0.99, 0.98, 0.97, 0.96, 0.95)) {
-                    plot(
-                      G
-                      ,
-                      layout = ini
-                      ,
-                      vertex.size = size
-                      ,
-                      edge.arrow.size = 0.6 * (1 + size.ed)
-                      ,
-                      edge.width = size.ed * 5
-                      ,
-                      edge.arrow.width = 0.5 * (1 + size.ed)
-                      #,edge.width=size.ed*5*edge.thickness
-                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                      ,
-                      vertex.color = grey(i)
-                      ,
-                      vertex.label.cex = 1
-                      ,
-                      edge.color = grey(i)
-                      ,
-                      asp = 0
-                      ,
-                      vertex.label = nom2
-                      ,
-                      vertex.frame.color = frame.color
-                    )
-                  }
-                  for (i in 1:(T)) {
-                    Ver.col <- rep(grey(0.95), length(nom))
-                    Edge.col <- rep(grey(0.95), dim(Q)[1])
-                    mms <- 20
-                    PP <- 1:mms
-                    for (p in PP) {
-                      coul <- col2rgb(color.vertex[i])
-                      indi <- which(gr2 == i)
-                      Ver.col[indi] <-
-                        rgb(
-                          coul[1],
-                          coul[2],
-                          coul[3],
-                          alpha = (p - 1) * 255 / (mms),
-                          maxColorValue = 255
-                        )
-                      
-                      
-                      for (k in 1:i) {
-                        coul <- col2rgb(color.vertex[k])
-                        indi3 <- which(gr[Q[, 1]] == k &
-                                         gr[Q[, 2]] == i)
-                        
-                        Edge.col[indi3] <-
-                          rgb(
-                            coul[1],
-                            coul[2],
-                            coul[3],
-                            alpha = 255 - (p - 1) * 255 / (mms),
-                            maxColorValue = 255
-                          )
-                      }
-                      
-                      if (i != T) {
-                        #                        for(k in 1:ngrp){
-                        for (k in 1:i) {
-                          #                          for(k2 in (1:ngrp)[-k]){
-                          for (k2 in min((i + 1), T):T) {
-                            coul <- col2rgb(color.vertex[k])
-                            indi3 <-
-                              which(gr[Q[, 1]] == k & gr[Q[, 2]] == k2)
-                            
-                            
-                            
-                            
-                            al <- round(mms / abs(k2 - k))
-                            ald <- min(1 + al * abs(i - k), mms)
-                            if (k2 == (i + 1)) {
-                              alf <- mms
-                            }
-                            else{
-                              alf <- min(al * (i - k + 1), mms)
-                            }
-                            #alf<-max(1,min(al*abs(i-k+1),mms))}
-                            alseq <- seq(25, 255, length.out = mms)
-                            #                            cat(al," ");cat(ald," ");cat(alf," ");cat(mms," ");cat(alseq," ");cat("\n")
-                            alphaseq2 <-
-                              seq(alseq[ald], alseq[alf], length.out = mms)
-                            
-                            Edge.col[indi3] <-
-                              rgb(coul[1],
-                                  coul[2],
-                                  coul[3],
-                                  alpha = alphaseq2[p],
-                                  maxColorValue = 255)
-                          }
-                        }
-                      }
-                      
-                      plot(
-                        G
-                        ,
-                        layout = ini
-                        ,
-                        vertex.size = size
-                        #,edge.width=size.ed*5*edge.thickness
-                        #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                        #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                        ,
-                        edge.arrow.size = 0.6 * (1 + size.ed)
-                        ,
-                        edge.width = size.ed * 5
-                        ,
-                        edge.arrow.size = 0.5 * (1 + size.ed)
-                        ,
-                        vertex.color = Ver.col
-                        ,
-                        vertex.label.cex = 1
-                        ,
-                        edge.color = Edge.col
-                        ,
-                        asp = 0
-                        ,
-                        vertex.label = nom2
-                        ,
-                        vertex.frame.color = frame.color
-                      )
-                      if (length(unique(gr[nom])) > 1) {
-                        legend(
-                          legend.position
-                          ,
-                          horiz = horiz
-                          ,
-                          pch = 21
-                          ,
-                          pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
-                          ,
-                          col = frame.color
-                          ,
-                          legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
-                        )
-                      }
-                    }
-                    
-                    
-                    
-                  }
-                  
-                  
-                }, img.name = ani.img.name, imgdir = ani.imgdir, htmlfile = ani.htmlfile)
-                
-                
-              }
-              else{
-                par(
-                  mar = c(0, 0, 0, 0),
-                  oma = c(0, 0, 0, 0),
-                  mai = c(0, 0, 0, 0)
-                )
-                if (length(unique(gr[nom])) > 1 &
-                    !is.null(color.edge)) {
-                  trr <- color.edge[gr[Q[, 1]]]
-                } else {
-                  if (length(unique(gr[nom])) > 1 &
-                      is.null(color.edge)) {
-                    trr <-
-                      color.vertex[gr[Q[, 2]]]
-                    #cat(length(unique(gr[nom])) > 1 & is.null(color.edge))
-                  } else {
-                    trr <- "grey"
-                    #cat(length(unique(gr[nom])) > 1 & is.null(color.edge))
-                  }
-                }
-                
-                if (is.null(ini)) {
-                  L <- position(x, nv)[, 2:3]
-                  #maxL<-c(max(abs(L[,1])),max(abs(L[,2])))
-                  #matMaxL<-matrix(rep(maxL,nrow(L)),ncol=2,byrow=T)
-                  #L<-L/matMaxL
-                  if (coloring == 0) {
-                    plot(
-                      G
-                      ,
-                      layout = L
-                      ,
-                      vertex.size = size
-                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                      #,edge.width=size.ed*5*edge.thickness
-                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                      ,
-                      edge.arrow.size = 0.6 * (1 + size.ed)
-                      ,
-                      edge.width = size.ed * 5
-                      ,
-                      edge.arrow.width = 0.5 * (1 + size.ed)
-                      ,
-                      vertex.color = color.vertex[nom]
-                      ,
-                      vertex.label.cex = 1
-                      ,
-                      edge.color = trr
-                      ,
-                      asp = 0
-                      ,
-                      vertex.label = nom2
-                      ,
-                      vertex.frame.color = frame.color
-                    )
-                  }
-                  else{
-                    plot(
-                      G
-                      ,
-                      layout = L
-                      ,
-                      vertex.size = size
-                      #,edge.width=size.ed*5*edge.thickness
-                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                      ,
-                      edge.arrow.size = 0.6 * (1 + size.ed)
-                      ,
-                      edge.width = size.ed * 5
-                      ,
-                      edge.arrow.width = 0.5 * (1 + size.ed)
-                      ,
-                      vertex.color = color.vertex[gr[nom]]
-                      ,
-                      vertex.label.cex = 1
-                      ,
-                      edge.color = trr
-                      ,
-                      asp = 0
-                      ,
-                      vertex.label = nom2
-                      ,
-                      vertex.frame.color = frame.color
-                    )
-                  }
-                  
-                  if (length(unique(gr[nom])) > 1) {
-                    legend(
-                      legend.position
-                      ,
-                      horiz = horiz
-                      ,
-                      pch = 21
-                      ,
-                      pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
-                      ,
-                      col = frame.color
-                      ,
-                      legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
-                    )
-                  }
-                }
-                else{
-                  L <- ini[, 2:3]
-                  if (coloring == 0) {
-                    plot(
-                      G
-                      ,
-                      layout = L
-                      ,
-                      vertex.size = size
-                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                      #,edge.width=size.ed*5*edge.thickness
-                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                      ,
-                      edge.arrow.size = 0.6 * (1 + size.ed)
-                      ,
-                      edge.width = size.ed * 5
-                      ,
-                      edge.arrow.width = 0.5 * (1 + size.ed)
-                      ,
-                      vertex.color = color.vertex[nom]
-                      ,
-                      vertex.label.cex = 1
-                      ,
-                      edge.color = trr
-                      ,
-                      asp = 0
-                      ,
-                      vertex.label = nom2
-                      ,
-                      vertex.frame.color = frame.color
-                    )
-                  }
-                  else{
-                    plot(
-                      G
-                      ,
-                      layout = L
-                      ,
-                      vertex.size = size
-                      #,edge.width=size.ed*5*edge.thickness
-                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
-                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
-                      ,
-                      edge.arrow.size = 0.6 * (1 + size.ed)
-                      ,
-                      edge.width = size.ed * 5
-                      ,
-                      edge.arrow.width = 0.5 * (1 + size.ed)
-                      ,
-                      vertex.color = color.vertex[gr[nom]]
-                      ,
-                      vertex.label.cex = 1
-                      ,
-                      edge.color = trr
-                      ,
-                      asp = 0
-                      ,
-                      vertex.label = nom2
-                      ,
-                      vertex.frame.color = frame.color
-                    )
-                  }
-                  if (length(unique(gr[nom])) > 1) {
-                    legend(
-                      legend.position
-                      ,
-                      horiz = horiz
-                      ,
-                      pch = 21
-                      ,
-                      pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
-                      ,
-                      col = frame.color
-                      ,
-                      legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
-                    )
-                  }
-                  L <- ini
-                }
-              }
-              invisible(G)
-            }
-          })
-
 #' Find the neighborhood of a set of nodes.
 #' 
 #' Find the neighborhood of a set of nodes.
 #' 
 #' 
 #' @aliases geneNeighborhood geneNeighborhood-methods
-#' geneNeighborhood,network-method
-#' @param net a network object
+#' geneNeighborhood,omics_network-method
+#' @param net a omics_network object
 #' @param targets a vector containing the set of nodes
 #' @param nv the level of cutoff. Defaut to 0.
 #' @param order of the neighborhood. Defaut to `length(net@time_pt)-1`.
@@ -1184,7 +617,7 @@ setMethod("plot"
 #' geneNeighborhood(network,targets=EGR1,nv=nv,ini=P,
 #' label_v=gene_IDs)
 #'           
-setMethod("geneNeighborhood", "network"
+setMethod("geneNeighborhood", "omics_network"
           , function(net
                      ,
                      targets
@@ -1207,8 +640,8 @@ setMethod("geneNeighborhood", "network"
                      ,
                      names = F) {
             require(igraph, quietly = TRUE, warn.conflicts = FALSE);on.exit(unloadNamespace("package:igraph"))
-            O <- net@network
-            Omega <- net@network
+            O <- net@omics_network
+            Omega <- net@omics_network
             O[abs(O) <= nv] <- 0
             O[abs(O) > nv] <- 1
             G <- graph.adjacency(O, weighted = TRUE)
@@ -1302,8 +735,8 @@ setMethod("geneNeighborhood", "network"
 #' selectboost algorithms.
 #' 
 #' 
-#' @aliases cutoff cutoff-methods cutoff,network-method
-#' @param Omega a network object
+#' @aliases cutoff cutoff-methods cutoff,omics_network-method
+#' @param Omega a omics_network object
 #' @param sequence a vector corresponding to the sequence of cutoffs that will be tested.
 #' @param x_min an integer ; only values over x_min are further retained for performing the test.
 #' 
@@ -1320,7 +753,7 @@ setMethod("geneNeighborhood", "network"
 #' 		#See vignette for more details
 #' }
 #' 
-setMethod("cutoff", "network", function(Omega,
+setMethod("cutoff", "omics_network", function(Omega,
                                         sequence = NULL,
                                         x_min = 0) {
   plfit <- function(x = VGAM::rpareto(1000, 10, 2.5)
@@ -1884,12 +1317,12 @@ setMethod("cutoff", "network", function(Omega,
   sequence_test <- sequence
   
   #   if(is.null(x_min)){
-  #     x_min<-round(dim(Omega@network)[1]*0.02)
+  #     x_min<-round(dim(Omega@omics_network)[1]*0.02)
   #   }
   if (is.null(sequence_test)) {
     sequence_test <-
       seq(0, min(max(abs(
-        Omega@network * 0.9
+        Omega@omics_network * 0.9
       )), 0.4), length.out = 10)
   }
   #
@@ -1906,7 +1339,7 @@ setMethod("cutoff", "network", function(Omega,
   for (cc in sequence_test) {
     u <- u + 1
     print(paste(u, length(sequence_test), sep = "/"))
-    O <- Omega@network
+    O <- Omega@omics_network
     #On garde les liens d'intensite superieure au cutoff
     O[abs(O) > cc] <- 1
     O[abs(O) <= cc] <- 0
@@ -1991,7 +1424,7 @@ setMethod("cutoff", "network", function(Omega,
 #' 
 #' 
 #' @name compare-methods
-#' @aliases compare-methods compare compare,network,network,numeric-method
+#' @aliases compare-methods compare compare,omics_network,omics_network,numeric-method
 #' @docType methods
 #' @return A vector containing : sensitivity, predictive positive value, the
 #' usual F-score (2*ppv*sens/(sppvpe+sens)), the 1/2 ponderated Fscore
@@ -1999,16 +1432,16 @@ setMethod("cutoff", "network", function(Omega,
 #' ((1+2^2)*ppv*sens/(ppv*4+sens)).
 #' @section Methods: \describe{
 #' 
-#' \item{list("signature(Net = \"network\", Net_inf = \"network\", nv =
-#' \"numeric\")")}{ \describe{ \item{Net}{ A network object containing the
-#' actual network.  } \item{Net_inf}{ A network object containing the inferred
+#' \item{list("signature(Net = \"omics_network\", Net_inf = \"omics_network\", nv =
+#' \"numeric\")")}{ \describe{ \item{Net}{ A omics_network object containing the
+#' actual network.  } \item{Net_inf}{ A omics_network object containing the inferred
 #' network.  } \item{nv}{ A number that indicates at which level of cutoff the
 #' comparison should be done.  } } }
 #' 
 #' }
-#' @param Net A network object containing the
+#' @param Net A omics_network object containing the
 #' actual network.
-#' @param Net_inf A network object containing the inferred
+#' @param Net_inf A omics_network object containing the inferred
 #' network.
 #' @param nv A number that indicates at which level of cutoff the
 #' comparison should be done.
@@ -2022,18 +1455,18 @@ setMethod("cutoff", "network", function(Omega,
 #' Crit_values=NULL
 #' 
 #' #Here are the cutoff level tested
-#' test.seq<-seq(0,max(abs(Net_inf_PL@network*0.9)),length.out=200)
+#' test.seq<-seq(0,max(abs(Net_inf_PL@omics_network*0.9)),length.out=200)
 #' for(u in test.seq){
 #' 	Crit_values<-rbind(Crit_values,Patterns::compare(Net,Net_inf_PL,u))
 #' }
 #' matplot(test.seq,Crit_values,type="l",ylab="Criterion value",xlab="Cutoff level",lwd=2)
 #' legend(x="topleft", legend=colnames(Crit_values), lty=1:5,col=1:5,ncol=2,cex=.9)
 #' 
-setMethod("compare",c("network","network","numeric"),function(Net,
+setMethod("compare",c("omics_network","omics_network","numeric"),function(Net,
                                                               Net_inf,
                                                               nv=1){
-  N1<-Net@network
-  N2<-Net_inf@network
+  N1<-Net@omics_network
+  N2<-Net_inf@omics_network
   N1[abs(N1)>0]<-1
   N1[abs(N1)<=0]<-0
   N2[abs(N2)>nv]<-1
@@ -2063,3 +1496,572 @@ setMethod("compare",c("network","network","numeric"),function(Net,
   return(crits)
 }
 )
+
+
+
+#' @rdname plot-methods
+setMethod("plot"
+          , "omics_network"
+          , function(x
+                     ,
+                     y
+                     ,
+                     choice = "omics_network"
+                     ,
+                     nv = 0
+                     ,
+                     gr = NULL
+                     ,
+                     ini = NULL
+                     ,
+                     color.vertex = NULL
+                     ,
+                     color.edge = NULL
+                     ,
+                     video = TRUE
+                     ,
+                     weight.node = NULL
+                     ,
+                     ani = FALSE
+                     ,
+                     size = c(2000, 1000)
+                     ,
+                     label_v = 1:dim(x@omics_network)[1]
+                     ,
+                     horiz = TRUE
+                     ,
+                     legend.position = "topleft"
+                     ,
+                     frame.color = "black"
+                     ,
+                     label.hub = FALSE
+                     ,
+                     nround = 2
+                     ,
+                     ani.img.name = "Rplot"
+                     ,
+                     ani.imgdir = "images"
+                     ,
+                     ani.htmlfile = "index.html"
+                     ,
+                     outdir
+                     ,
+                     ani.group.legend = "Cluster"
+                     ,
+                     layout = ini
+                     ,
+                     alpha = 1
+                     ,
+                     pixmap.color = terrain.colors(20)
+                     #,edge.arrow.size=0.6*(1+size.ed)
+                     #,edge.thickness=1
+                     ,
+                     ...)
+          {
+            if (choice == "F") {
+              require(plotrix, quietly = TRUE)
+              F <- x@F
+              sizeF <- dim(F)[1]
+              nF <- dim(F)[3]
+              ngrp = sqrt(dim(F)[3])
+              ymax <- max(F)
+              coloring <- rainbow(ngrp)
+              #  par(mfrow=c(ngrp,ngrp))
+              FF = NULL
+              for (i in 1:ngrp) {
+                FFa = NULL
+                for (j in 1:ngrp) {
+                  FFa = cbind(FFa, round(F[, , (i - 1) * ngrp + j], nround))
+                  #par(mai=c(0.1,0.1,0.1,0.1))
+                  #color2D.matplot(x=round(F[,,(i-1)*ngrp+j],2),cs1=c(0,1,1),cs2=c(1,1,0),cs3=0,show.values=TRUE,axes=FALSE,main="",xlab="",ylab="",show.legend=TRUE)
+                }
+                FF = rbind(FF, FFa)
+              }
+              par(
+                mar = c(0, 0, 0, 0),
+                oma = c(0, 0, 0, 0),
+                mai = c(0, 0, 0, 0)
+              )
+              color2D.matplot(
+                x = FF,
+                cs1 = c(0, .5, 1),
+                cs2 = c(.5, 1, 0),
+                cs3 = c(1, 2, 0),
+                show.values = nround,
+                axes = FALSE,
+                main = "",
+                xlab = "",
+                ylab = "",
+                show.legend = FALSE
+              )
+              abline(h = sizeF * (1:(ngrp - 1)), lwd = 3, col="grey50")
+              abline(v = sizeF * (1:(ngrp - 1)), lwd = 3, col="grey50")
+            }
+            if (choice == "Fpixmap") {
+              require(plotrix, quietly = TRUE)
+              F <- x@F
+              nF <- dim(F)[3]
+              ngrp = sqrt(dim(F)[3])
+              ymax <- max(F)
+              coloring <- rainbow(ngrp)
+              #  par(mfrow=c(ngrp,ngrp))
+              FF = NULL
+              for (i in 1:ngrp) {
+                FFa = NULL
+                for (j in 1:ngrp) {
+                  FFa = cbind(FFa, round(F[, , (i - 1) * ngrp + j], nround))
+                  #par(mai=c(0.1,0.1,0.1,0.1))
+                  #color2D.matplot(x=round(F[,,(i-1)*ngrp+j],2),cs1=c(0,1,1),cs2=c(1,1,0),cs3=0,show.values=TRUE,axes=FALSE,main="",xlab="",ylab="",show.legend=TRUE)
+                }
+                FF = rbind(FF, FFa)
+              }
+              par(
+                mar = c(0, 0, 0, 0),
+                oma = c(0, 0, 0, 0),
+                mai = c(0, 0, 0, 0)
+              )
+              x.temp <- pixmap::pixmapGrey(data = FF, cellres = c(2, 2))
+              plot(x.temp)
+              #              abline(h=4*(1:(ngrp-1)),lwd=3)
+              #              abline(v=4*(1:(ngrp-1)),lwd=3)
+              rm(x.temp)
+            }
+            if (choice == "omics_network") {
+              coloring <- 0
+              O <- x@omics_network
+              Omega <- x@omics_network
+              O[abs(O) <= nv] <- 0
+              O[abs(O) > nv] <- 1
+              F <- x@F
+              nF <- dim(F)[3]
+              ngrp = sqrt(dim(F)[3])
+              
+              
+              
+              require(igraph, quietly = TRUE, warn.conflicts = FALSE);on.exit(unloadNamespace("package:igraph"))
+              if (is.null(gr)) {
+                gr <- rep(1, dim(O)[1])
+              }
+              if (is.null(color.vertex)) {
+                color.vertex <- rainbow(length(unique(gr)), alpha = alpha)
+              }
+              coloring <- 1
+              
+              nom <- 1:dim(O)[1]
+              enle <- which(apply(O, 1, sum) + apply(O, 2, sum) == 0)
+              if (length(enle) != 0) {
+                nom <- nom[-enle]
+                
+                O <- O[-enle, -enle]
+                
+                if (!is.null(weight.node)) {
+                  weight.node <- weight.node[-enle]
+                }
+              }
+              
+              if (!is.null(ini)) {
+                ini <- ini[which(ini[, 1] %in% nom), ]
+              }
+              #              nom2<-nom
+              nom2 <- label_v[nom]
+              if (!is.null(weight.node)) {
+                size <- weight.node
+              } else
+              {
+                size <- apply(O, 1, sum)
+              }
+              
+              size <- size / max(size) * 10
+              size[size < 2] <- 2
+              
+              if (label.hub == TRUE) {
+                nom2[which(size < 3)] <- NA
+              }
+              
+              
+              G <- igraph::graph.adjacency(O, weighted = TRUE)
+              
+              #    	if(.Platform$OS.type=="unix"){
+              #    get.edgelist(G)+1->Q
+              #    }else{
+              igraph::get.edgelist(G) -> Q
+              #    	}
+              Q[, 1] <- nom[Q[, 1]]
+              Q[, 2] <- nom[Q[, 2]]
+              size.ed <- rep(0, dim(Q)[1])
+              
+              for (i in 1:dim(Q)[1]) {
+                size.ed[i] <- abs(Omega[Q[i, 1], Q[i, 2]])
+              }
+              #fpl<-function(x){3*exp(8*x)/(14+exp(8*x))}
+              size.ed <- size.ed / max(size.ed)
+              #size.ed<-fpl(size.ed)
+              #size.ed<-size.ed
+              
+              if (ani == TRUE) {
+                if(missing(outdir)){stop("An output directory is required")}
+                #We save the user working directory.
+                orig_working_directory <- getwd()
+                
+                #We restore the user working directory on function exit.
+                on.exit(setwd(orig_working_directory))
+                
+                #Set the working directory to the outdir directory
+                setwd(outdir)
+                
+                if (is.null(gr)) {stop("Need of groups")
+                }
+                T <- length(unique(gr))#length(x@time_pt)
+                require(animation)
+                animation::ani.options(ani.height = size[2],
+                                       ani.width = size[1])
+                
+                if (is.null(ini)) {
+                  ini <- position(x, nv)[]
+                }
+                
+                
+                #ini<-ini[which(ini[,1] %in% nom),]
+                ini <- ini[, 2:3]
+                gr2 <- gr[nom]
+                
+                animation::saveHTML({
+                  for (i in c(0.999, 0.99, 0.98, 0.97, 0.96, 0.95)) {
+                    plot(
+                      G
+                      ,
+                      layout = ini
+                      ,
+                      vertex.size = size
+                      ,
+                      edge.arrow.size = 0.6 * (1 + size.ed)
+                      ,
+                      edge.width = size.ed * 5
+                      ,
+                      edge.arrow.width = 0.5 * (1 + size.ed)
+                      #,edge.width=size.ed*5*edge.thickness
+                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                      ,
+                      vertex.color = grey(i)
+                      ,
+                      vertex.label.cex = 1
+                      ,
+                      edge.color = grey(i)
+                      ,
+                      asp = 0
+                      ,
+                      vertex.label = nom2
+                      ,
+                      vertex.frame.color = frame.color
+                    )
+                  }
+                  for (i in 1:(T)) {
+                    Ver.col <- rep(grey(0.95), length(nom))
+                    Edge.col <- rep(grey(0.95), dim(Q)[1])
+                    mms <- 20
+                    PP <- 1:mms
+                    for (p in PP) {
+                      coul <- col2rgb(color.vertex[i])
+                      indi <- which(gr2 == i)
+                      Ver.col[indi] <-
+                        rgb(
+                          coul[1],
+                          coul[2],
+                          coul[3],
+                          alpha = (p - 1) * 255 / (mms),
+                          maxColorValue = 255
+                        )
+                      
+                      
+                      for (k in 1:i) {
+                        coul <- col2rgb(color.vertex[k])
+                        indi3 <- which(gr[Q[, 1]] == k &
+                                         gr[Q[, 2]] == i)
+                        
+                        Edge.col[indi3] <-
+                          rgb(
+                            coul[1],
+                            coul[2],
+                            coul[3],
+                            alpha = 255 - (p - 1) * 255 / (mms),
+                            maxColorValue = 255
+                          )
+                      }
+                      
+                      if (i != T) {
+                        #                        for(k in 1:ngrp){
+                        for (k in 1:i) {
+                          #                          for(k2 in (1:ngrp)[-k]){
+                          for (k2 in min((i + 1), T):T) {
+                            coul <- col2rgb(color.vertex[k])
+                            indi3 <-
+                              which(gr[Q[, 1]] == k & gr[Q[, 2]] == k2)
+                            
+                            
+                            
+                            
+                            al <- round(mms / abs(k2 - k))
+                            ald <- min(1 + al * abs(i - k), mms)
+                            if (k2 == (i + 1)) {
+                              alf <- mms
+                            }
+                            else{
+                              alf <- min(al * (i - k + 1), mms)
+                            }
+                            #alf<-max(1,min(al*abs(i-k+1),mms))}
+                            alseq <- seq(25, 255, length.out = mms)
+                            #                            cat(al," ");cat(ald," ");cat(alf," ");cat(mms," ");cat(alseq," ");cat("\n")
+                            alphaseq2 <-
+                              seq(alseq[ald], alseq[alf], length.out = mms)
+                            
+                            Edge.col[indi3] <-
+                              rgb(coul[1],
+                                  coul[2],
+                                  coul[3],
+                                  alpha = alphaseq2[p],
+                                  maxColorValue = 255)
+                          }
+                        }
+                      }
+                      
+                      plot(
+                        G
+                        ,
+                        layout = ini
+                        ,
+                        vertex.size = size
+                        #,edge.width=size.ed*5*edge.thickness
+                        #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                        #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                        ,
+                        edge.arrow.size = 0.6 * (1 + size.ed)
+                        ,
+                        edge.width = size.ed * 5
+                        ,
+                        edge.arrow.size = 0.5 * (1 + size.ed)
+                        ,
+                        vertex.color = Ver.col
+                        ,
+                        vertex.label.cex = 1
+                        ,
+                        edge.color = Edge.col
+                        ,
+                        asp = 0
+                        ,
+                        vertex.label = nom2
+                        ,
+                        vertex.frame.color = frame.color
+                      )
+                      if (length(unique(gr[nom])) > 1) {
+                        legend(
+                          legend.position
+                          ,
+                          horiz = horiz
+                          ,
+                          pch = 21
+                          ,
+                          pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
+                          ,
+                          col = frame.color
+                          ,
+                          legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
+                        )
+                      }
+                    }
+                    
+                    
+                    
+                  }
+                  
+                  
+                }, img.name = ani.img.name, imgdir = ani.imgdir, htmlfile = ani.htmlfile)
+                
+                
+              }
+              else{
+                par(
+                  mar = c(0, 0, 0, 0),
+                  oma = c(0, 0, 0, 0),
+                  mai = c(0, 0, 0, 0)
+                )
+                if (length(unique(gr[nom])) > 1 &
+                    !is.null(color.edge)) {
+                  trr <- color.edge[gr[Q[, 1]]]
+                } else {
+                  if (length(unique(gr[nom])) > 1 &
+                      is.null(color.edge)) {
+                    trr <-
+                      color.vertex[gr[Q[, 2]]]
+                    #cat(length(unique(gr[nom])) > 1 & is.null(color.edge))
+                  } else {
+                    trr <- "grey"
+                    #cat(length(unique(gr[nom])) > 1 & is.null(color.edge))
+                  }
+                }
+                
+                if (is.null(ini)) {
+                  L <- position(x, nv)[, 2:3]
+                  #maxL<-c(max(abs(L[,1])),max(abs(L[,2])))
+                  #matMaxL<-matrix(rep(maxL,nrow(L)),ncol=2,byrow=T)
+                  #L<-L/matMaxL
+                  if (coloring == 0) {
+                    plot(
+                      G
+                      ,
+                      layout = L
+                      ,
+                      vertex.size = size
+                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                      #,edge.width=size.ed*5*edge.thickness
+                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                      ,
+                      edge.arrow.size = 0.6 * (1 + size.ed)
+                      ,
+                      edge.width = size.ed * 5
+                      ,
+                      edge.arrow.width = 0.5 * (1 + size.ed)
+                      ,
+                      vertex.color = color.vertex[nom]
+                      ,
+                      vertex.label.cex = 1
+                      ,
+                      edge.color = trr
+                      ,
+                      asp = 0
+                      ,
+                      vertex.label = nom2
+                      ,
+                      vertex.frame.color = frame.color
+                    )
+                  }
+                  else{
+                    plot(
+                      G
+                      ,
+                      layout = L
+                      ,
+                      vertex.size = size
+                      #,edge.width=size.ed*5*edge.thickness
+                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                      ,
+                      edge.arrow.size = 0.6 * (1 + size.ed)
+                      ,
+                      edge.width = size.ed * 5
+                      ,
+                      edge.arrow.width = 0.5 * (1 + size.ed)
+                      ,
+                      vertex.color = color.vertex[gr[nom]]
+                      ,
+                      vertex.label.cex = 1
+                      ,
+                      edge.color = trr
+                      ,
+                      asp = 0
+                      ,
+                      vertex.label = nom2
+                      ,
+                      vertex.frame.color = frame.color
+                    )
+                  }
+                  
+                  if (length(unique(gr[nom])) > 1) {
+                    legend(
+                      legend.position
+                      ,
+                      horiz = horiz
+                      ,
+                      pch = 21
+                      ,
+                      pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
+                      ,
+                      col = frame.color
+                      ,
+                      legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
+                    )
+                  }
+                }
+                else{
+                  L <- ini[, 2:3]
+                  if (coloring == 0) {
+                    plot(
+                      G
+                      ,
+                      layout = L
+                      ,
+                      vertex.size = size
+                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                      #,edge.width=size.ed*5*edge.thickness
+                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                      ,
+                      edge.arrow.size = 0.6 * (1 + size.ed)
+                      ,
+                      edge.width = size.ed * 5
+                      ,
+                      edge.arrow.width = 0.5 * (1 + size.ed)
+                      ,
+                      vertex.color = color.vertex[nom]
+                      ,
+                      vertex.label.cex = 1
+                      ,
+                      edge.color = trr
+                      ,
+                      asp = 0
+                      ,
+                      vertex.label = nom2
+                      ,
+                      vertex.frame.color = frame.color
+                    )
+                  }
+                  else{
+                    plot(
+                      G
+                      ,
+                      layout = L
+                      ,
+                      vertex.size = size
+                      #,edge.width=size.ed*5*edge.thickness
+                      #,edge.arrow.size=edge.arrow.size*size.ed*edge.thickness
+                      #,edge.arrow.width=edge.arrow.size*size.ed*edge.thickness
+                      ,
+                      edge.arrow.size = 0.6 * (1 + size.ed)
+                      ,
+                      edge.width = size.ed * 5
+                      ,
+                      edge.arrow.width = 0.5 * (1 + size.ed)
+                      ,
+                      vertex.color = color.vertex[gr[nom]]
+                      ,
+                      vertex.label.cex = 1
+                      ,
+                      edge.color = trr
+                      ,
+                      asp = 0
+                      ,
+                      vertex.label = nom2
+                      ,
+                      vertex.frame.color = frame.color
+                    )
+                  }
+                  if (length(unique(gr[nom])) > 1) {
+                    legend(
+                      legend.position
+                      ,
+                      horiz = horiz
+                      ,
+                      pch = 21
+                      ,
+                      pt.bg = color.vertex[unique(gr[nom])[order(unique(gr[nom]))]]
+                      ,
+                      col = frame.color
+                      ,
+                      legend = paste(ani.group.legend, unique(gr[nom])[order(unique(gr[nom]))])
+                    )
+                  }
+                  L <- ini
+                }
+              }
+              invisible(G)
+            }
+          })

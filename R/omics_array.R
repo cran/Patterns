@@ -1,31 +1,71 @@
-#' Overview of a micro_array object
+#' \code{Show} methods
 #' 
-#' Overview of a micro_array object.
+#' Methods for generic function \code{show}
 #' 
 #' 
-#' @aliases methods head-methods head,ANY-method head,micro_array-method
+#' @name show-methods
+#' @aliases show-methods show,ANY-method show,omics_array-method
+#' show,omics_network-method
+#' @docType methods
+#' @section Methods: \describe{
+#' \item{list("signature(object = \"ANY\")")}{ }
+#' \item{list("signature(object = \"omics_array\")")}{ Print an object of class omics_array }
+#' \item{list("signature(object = \"omics_network\")")}{ Print an object of class omics_network } 
+#' }
+#' 
+#' @param object an object of class omics-array or omics_network
+#' 
+#' @author Bertrand Frederic, Myriam Maumy-Bertrand.
+#' @keywords methods
+#' 
+setMethod("show","omics_array",function(object)
+{
+  cat(paste("This is a omics_array S4 class. It contains : \n - (@omicsarray) a matrix of dimension ",
+            dim(object@omicsarray)[1],"*",dim(object@omicsarray)[2],
+            "\n          .... [omics expressions (or abundancies)] \n - (@name) a vector of length ",
+            length(object@name),
+            " .... [omics names (i.e. gene or peptides names)] \n","\n - (@gene_ID) a vector of length ",
+            length(object@gene_ID),
+            " .... [omics ID] \n","- (@group) a vector of length ",
+            length(object@group),
+            " .... [groups for omics] \n","- (@start_time) a vector of length ",
+            length(object@start_time),
+            "\n          .... [first differential expression for omics] \n",
+            "- (@time)a vector of length ",
+            length(object@time),
+            " .... [time points]\n",
+            "- (@subject) an integer  .... [number of subject]")) 	
+  invisible(object)
+})
+
+#' Overview of a omics_array object
+#' 
+#' Overview of a omics_array object.
+#' 
+#' 
+#' @aliases methods head-methods head,ANY-method head,omics_array-method
 #' @section Methods: \describe{
 #' 
 #' \item{list("signature(x = \"ANY\")")}{ Gives an overview. }
 #' 
-#' \item{list("signature(x = \"micro_array\")")}{ Gives an overview. } }
-#' @param x an object of class `micro_array`.
+#' \item{list("signature(x = \"omics_array\")")}{ Gives an overview. } }
+#' @param x an object of class `omics_array`.
 #' @param ... additional parameters
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods
 #' @examples
 #' 
-#'   if(require(CascadeData)){
+#'  if(require(CascadeData)){
 #' 	data(micro_US)
-#' 	micro_US<-as.micro_array(micro_US,time=c(60,90,210,390),subject=6)
+#' 	micro_US<-as.omics_array(micro_US,time=c(60,90,210,390),subject=6)
 #' 	head(micro_US)
 #' 	}
 #' 
-setMethod("head","micro_array",function(x,...)
+setMethod("head",signature="omics_array",function(x,...)
 {
-  K<-dim(x@microarray)[2]
+  K<-dim(x@omicsarray)[2]
   K<-min(K,3)
-  return(list(microarray=head(x@microarray[,1:K]),
+  return(list(omicsarray=head(x@omicsarray[,1:K]),
      name=head(x@name),
      gene_ID=head(x@gene_ID),
      group=head(x@group),
@@ -36,76 +76,34 @@ setMethod("head","micro_array",function(x,...)
 )
 
 
-#' \code{Print} methods
-#' 
-#' Methods for generic function \code{print}
-#' 
-#' 
-#' @name print-methods
-#' @aliases print-methods print,ANY-method print,micro_array-method
-#' print,network-method
-#' @docType methods
-#' @section Methods: \describe{
-#' \item{list("signature(x = \"ANY\")")}{ }
-#' \item{list("signature(x = \"micro_array\")")}{ Print an object of class micro_array }
-#' \item{list("signature(x = \"network\")")}{ Print an object of class network } 
-#' }
-#' 
-#' @param x an object of class micro-array or network
-#' @param ... additional parameters
-#' 
-#' @author Bertrand Frederic, Myriam Maumy-Bertrand.
-#' @keywords methods
-#' 
-setMethod("print","micro_array",function(x,...)
-{
-  cat(paste("This is a micro_array S4 class. It contains : \n - (@microarray) a matrix of dimension ",
-            dim(x@microarray)[1],"*",dim(x@microarray)[2],
-            "\n          .... [gene expressions] \n - (@name) a vector of length ",
-            length(x@name),
-            " .... [gene names (or probesets)] \n","\n - (@gene_ID) a vector of length ",
-            length(x@gene_ID),
-            " .... [gene ID] \n","- (@group) a vector of length ",
-            length(x@group),
-            " .... [groups for genes] \n","- (@start_time) a vector of length ",
-            length(x@start_time),
-            "\n          .... [first differential expression for genes] \n",
-            "- (@time)a vector of length ",
-            length(x@time),
-            " .... [time points]\n",
-            "- (@subject) an integer  .... [number of subject]")) 	
-  invisible(x)
-})
-
-
 #' \code{Summary} methods
 #' 
 #' Methods for function \code{summary}
 #' 
 #' 
 #' @name summary-methods
-#' @aliases summary-methods summary,ANY-method summary,micro_array-method
+#' @aliases summary-methods summary,ANY-method summary,omics_array-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
 #' \item{list("signature(object = \"ANY\")")}{ %% ~~describe this method here~~
 #' }
 #' 
-#' \item{list("signature(object = \"micro_array\")")}{ %% ~~describe this
+#' \item{list("signature(object = \"omics_array\")")}{ %% ~~describe this
 #' method here~~ } }
 #' 
-#' @param object an object of class micro-array
+#' @param object an object of class omics-array
 #' @param nb.graph (optionnal) choose the graph to plot. Displays all graphs by default.
 #' @param ... additional parameters.
 #' 
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods
 #' 
-setMethod("summary","micro_array",function(object,nb.graph=NULL,...)
+setMethod("summary","omics_array",function(object,nb.graph=NULL,...)
 {
   require(cluster)
-  print(summary(object@microarray))
-  G<-object@microarray
+  print(summary(object@omicsarray))
+  G<-object@omicsarray
   colnames(G)<-paste(rep(paste("T",object@time),object@subject), as.character(rep(paste("subject",1:object@subject),each=length(object@time))))
   z <- cor(G)
   require(lattice)
@@ -118,7 +116,7 @@ setMethod("summary","micro_array",function(object,nb.graph=NULL,...)
                                                              ylab.right = 2))))
   }
   #if(is.null(nb.graph)){dev.new()}
-  G<-object@microarray
+  G<-object@omicsarray
   colnames(G)<-paste(rep(paste("T",object@time),object@subject), as.character(rep(paste("subject",1:object@subject),each=length(object@time))))
   w<-cluster::agnes(t(G))[1]$order
   G<-G[,w]
@@ -131,10 +129,10 @@ setMethod("summary","micro_array",function(object,nb.graph=NULL,...)
                     par.settings = list(layout.widths = list(axis.key.padding = 0,
                                                              ylab.right = 2))))
   }
-  if(dim(object@microarray)[1]<1000){
+  if(dim(object@omicsarray)[1]<1000){
     #if(is.null(nb.graph)){dev.new()}
     
-    R<-object@microarray
+    R<-object@omicsarray
     w<-cluster::agnes(R)[1]$order
     R<-R[w,]
     z <- cor(t(R))
@@ -155,18 +153,18 @@ setMethod("summary","micro_array",function(object,nb.graph=NULL,...)
 #' 
 #' 
 #' @name dim
-#' @aliases dim dim-methods dim,micro_array-method
+#' @aliases dim dim-methods dim,omics_array-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
-#' \item{list("signature(x = \"micro_array\")")}{ Gives the dimension of the
+#' \item{list("signature(x = \"omics_array\")")}{ Gives the dimension of the
 #' matrix of measurements. } }
-#' @param x an object of class `micro_array`.
+#' @param x an object of class `omics_array`.
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods
-setMethod("dim","micro_array",function(x)
+setMethod("dim","omics_array",function(x)
 {
-  return(dim(x@microarray))
+  return(dim(x@omicsarray))
 })
 
 
@@ -179,15 +177,15 @@ setMethod("dim","micro_array",function(x)
 #' 
 #' 
 #' @name plot-methods
-#' @aliases plot-methods plot,micro_array,ANY-method
-#' plot,micropredict,ANY-method plot,network,ANY-method
+#' @aliases plot-methods plot,omics_array,ANY-method
+#' plot,omics_predict,ANY-method plot,omics_network,ANY-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
-#' \item{list("signature(x = \"micro_array\", y = \"ANY\",...)")}{ \describe{
-#' \item{x}{a micro\_array object} \item{list_nv}{a vector of cutoff at which
-#' the network should be shown} } } \item{list("signature(x = \"network\", y =
-#' \"ANY\",...)")}{ \describe{ \item{x}{a network object}
+#' \item{list("signature(x = \"omics_array\", y = \"ANY\",...)")}{ \describe{
+#' \item{x}{a omics_array object} \item{list_nv}{a vector of cutoff at which
+#' the network should be shown} } } \item{list("signature(x = \"omics_network\", y =
+#' \"ANY\",...)")}{ \describe{ \item{x}{a omics_network object}
 #' \item{list()}{Optionnal arguments: \describe{ \item{gr}{a vector giving the
 #' group of each gene} \item{choice}{what graphic should be plotted: either "F"
 #' (for a representation of the matrices F) or "network".} \item{nv}{the level
@@ -202,11 +200,11 @@ setMethod("dim","micro_array",function(x)
 #' only the hubs are labeled} \item{edge.arrow.size}{size of the arrows ;
 #' default to 0.7} \item{edge.thickness}{edge thickness ; default to 1.} } }}}
 #' 
-#' \item{list("signature(x = \"micropredict\", y = \"ANY\",...)")}{ \describe{
-#' \item{x}{a micropredict object} \item{list()}{Optionnal arguments: see plot
-#' for network} }} }
+#' \item{list("signature(x = \"omics_predict\", y = \"ANY\",...)")}{ \describe{
+#' \item{x}{a omics_predict object} \item{list()}{Optional arguments: see plot
+#' for omics_network} }} }
 #' 
-#' @param x a micro\_array object, a network object or a micropredict object
+#' @param x a omics_array object, a omics_network object or a omics_predict object
 #' @param y optional and not used if x is an appropriate structure
 #' @param gr a vector giving the group of each gene 
 #' @param choice what graphic should be plotted: either "F"
@@ -245,16 +243,16 @@ setMethod("dim","micro_array",function(x)
 #' 
 #' if(require(CascadeData)){
 #' data(micro_US, package="CascadeData")
-#' micro_US<-as.micro_array(micro_US[1:100,],time=c(60,90,210,390),subject=6)
+#' micro_US<-as.omics_array(micro_US[1:100,],time=c(60,90,210,390),subject=6)
 #' plot(micro_US)
 #' }
 #' 
-setMethod("plot","micro_array",function(x,...)
+setMethod("plot","omics_array",function(x,...)
 {
   
   requireNamespace("lattice")
-  requireNamespace("grid")	
-  xs<-t(x@microarray)
+  #requireNamespace("grid")	
+  xs<-t(x@omicsarray)
   
   rownames(xs)<-1:dim(xs)[1]
   ys<-x@time
@@ -300,36 +298,36 @@ setMethod("plot","micro_array",function(x,...)
 #' package
 #' 
 #' 
-#' @aliases probeMerge probeMerge,micro_array-method
-#' @param x Microarray
+#' @aliases probeMerge probeMerge,omics_array-method
+#' @param x omicsarray
 #' @param \dots Additionnal parameters to the collapseRows function of the
 #' WGCNA package
-#' @return Formal class 'micro_array' [package "Patterns"] with 7 slots
+#' @return Formal class 'omics_array' [package "Patterns"] with 7 slots
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords manip
 #' @examples
 #' 
 #' if(require(CascadeData)){
 #' data(micro_S)
-#' D<-as.micro_array(micro_S[1:2000,],1:4,6)
+#' D<-as.omics_array(micro_S[1:2000,],1:4,6)
 #' D@gene_ID<-jetset::scores.hgu133plus2[D@name,"EntrezID"]
 #' PM <- probeMerge(D)
 #' }
 #' 
-setMethod("probeMerge","micro_array",function(x,...)
+setMethod("probeMerge","omics_array",function(x,...)
 {
   #requireNamespace('WGCNA',quietly = TRUE)
   probeID<-x@name
   geneID<-x@gene_ID
-  M<-x@microarray
+  M<-x@omicsarray
   
   NAsPositions<-which(is.na(geneID))
   geneID[NAsPositions]<-paste("Unknown",1:length(NAsPositions))
   
   selec<-WGCNA::collapseRows(datET=M,rowGroup=geneID,rowID=probeID,...)
   
-  M1<-new("micro_array"
-          ,microarray=selec$datETcollapsed
+  M1<-new("omics_array"
+          ,omicsarray=selec$datETcollapsed
           ,name=selec$group2row[,2]
           ,gene_ID=selec$group2row[,1]
           ,time=x@time
@@ -341,18 +339,18 @@ setMethod("probeMerge","micro_array",function(x,...)
 
 
 
-#' Cluster a micro_array object: determine optimal fuzzification parameter and
+#' Cluster a omics_array object: determine optimal fuzzification parameter and
 #' number of clusters.
 #' 
 #' Based on soft clustering performed by the Mfuzz package.
 #' 
 #' 
 #' @aliases unsupervised_clustering_auto_m_c
-#' unsupervised_clustering_auto_m_c,micro_array-method
-#' @param M1 Object of micro_array class.
+#' unsupervised_clustering_auto_m_c,omics_array-method
+#' @param M1 Object of omics_array class.
 #' @param clust [NULL] Number of clusters.
 #' @param mestim [NULL] Fuzzification parameter.
-#' @param M2 [NULL] Object of micro_array class,
+#' @param M2 [NULL] Object of omics_array class,
 #' @param data_log [TRUE] Should data be logged?
 #' @param screen [NULL] Specify `screen` parameter.
 #' @param crange [NULL] Specify `crange` parameter.
@@ -369,12 +367,12 @@ setMethod("probeMerge","micro_array",function(x,...)
 #' 
 #' if(require(CascadeData)){
 #' data(micro_S, package="CascadeData")
-#' M<-as.micro_array(micro_S[1:100,],1:4,6)
+#' M<-as.omics_array(micro_S[1:100,],1:4,6)
 #' mc<-unsupervised_clustering_auto_m_c(M)
 #' }
 #' 
 setMethod(f="unsupervised_clustering_auto_m_c", 	
-          signature=c("micro_array"),
+          signature=c("omics_array"),
           definition=function(M1,
                               clust=NULL,
                               mestim=NULL,
@@ -390,19 +388,19 @@ setMethod(f="unsupervised_clustering_auto_m_c",
             if(is.null(repeats)){repeats=5}
             if(is.null(M2)){
               if(data_log==TRUE){
-                M<-log(M1@microarray)
+                M<-log(M1@omicsarray)
               }
               else{
-                M<-(M1@microarray)
+                M<-(M1@omicsarray)
               }
             } else {
               if(data_log==TRUE){
-                M1_mic<-log(M1@microarray)
-                M2_mic<-log(M2@microarray)
+                M1_mic<-log(M1@omicsarray)
+                M2_mic<-log(M2@omicsarray)
               }
               else{
-                M1_mic<-M1@microarray
-                M2_mic<-M2@microarray
+                M1_mic<-M1@omicsarray
+                M2_mic<-M2@omicsarray
               }
               M=M1_mic-M2_mic
             } 
@@ -429,23 +427,23 @@ setMethod(f="unsupervised_clustering_auto_m_c",
 
 
 
-#' Cluster a micro_array object: performs the clustering.
+#' Cluster a omics_array object: performs the clustering.
 #' 
 #' Based on soft clustering performed by the Mfuzz package.
 #' 
 #' 
 #' @aliases unsupervised_clustering
-#' unsupervised_clustering,micro_array,numeric,numeric-method
-#' @param M1 Object of micro_array class.
+#' unsupervised_clustering,omics_array,numeric,numeric-method
+#' @param M1 Object of omics_array class.
 #' @param clust Number of clusters.
 #' @param mestim Fuzzification parameter.
-#' @param M2 [NULL] Object of micro_array class,
+#' @param M2 [NULL] Object of omics_array class,
 #' @param data_log [TRUE] Should data be logged?
 #' @param screen [NULL] Specify `mfrow` parameter.
 #' @param heatmap [TRUE] Plot heatmaps?
 #' @param new.window [TRUE] Use new window?
 #' 
-#' @return An object of class micro_array with the group slot updated by groups
+#' @return An object of class omics_array with the group slot updated by groups
 #' deduced from the soft clustering result.
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords cluster
@@ -453,7 +451,7 @@ setMethod(f="unsupervised_clustering_auto_m_c",
 #' 
 #' if(require(CascadeData)){
 #' data(micro_S, package="CascadeData")
-#' M<-as.micro_array(micro_S[51:100,],1:4,6)
+#' M<-as.omics_array(micro_S[51:100,],1:4,6)
 #' mc<-unsupervised_clustering_auto_m_c(M)
 #' MwithGrp=unsupervised_clustering(M, 4, mc$m, screen=NULL, heatmap=FALSE, new.window = FALSE)
 #' # Other options
@@ -463,7 +461,7 @@ setMethod(f="unsupervised_clustering_auto_m_c",
 #' }
 #' 
 setMethod(f="unsupervised_clustering", 	
-          signature=c("micro_array","numeric","numeric"),
+          signature=c("omics_array","numeric","numeric"),
           definition=function(M1,
                               clust,
                               mestim,
@@ -475,19 +473,19 @@ setMethod(f="unsupervised_clustering",
             require("Mfuzz", quietly = TRUE, warn.conflicts = FALSE)
             if(is.null(M2)){
               if(data_log==TRUE){
-                M<-log(M1@microarray)
+                M<-log(M1@omicsarray)
               }
               else{
-                M<-(M1@microarray)
+                M<-(M1@omicsarray)
               }
             } else {
               if(data_log==TRUE){
-                M1_mic<-log(M1@microarray)
-                M2_mic<-log(M2@microarray)
+                M1_mic<-log(M1@omicsarray)
+                M2_mic<-log(M2@omicsarray)
               }
               else{
-                M1_mic<-(M1@microarray)
-                M2_mic<-(M2@microarray)
+                M1_mic<-(M1@omicsarray)
+                M2_mic<-(M2@omicsarray)
               }
               M=M1_mic-M2_mic
             } 
@@ -523,16 +521,16 @@ setMethod(f="unsupervised_clustering",
 #' 
 #' @name geneSelection
 #' @aliases genePeakSelection geneSelection genePeakSelection-methods
-#' geneSelection-methods geneSelection,micro_array,numeric-method
-#' geneSelection,micro_array,micro_array,numeric-method
+#' geneSelection-methods geneSelection,omics_array,numeric-method
+#' geneSelection,omics_array,omics_array,numeric-method
 #' geneSelection,list,list,numeric-method
-#' genePeakSelection,micro_array,numeric-method
-#' @param x either a micro_array object or a list of micro_array objects. In
-#' the first case, the micro_array object represents the stimulated
+#' genePeakSelection,omics_array,numeric-method
+#' @param x either a omics_array object or a list of omics_array objects. In
+#' the first case, the omics_array object represents the stimulated
 #' measurements. In the second case, the control unstimulated data (if present)
 #' should be the first element of the list.
-#' @param y either a micro_array object or a list of strings. In the first
-#' case, the micro_array object represents the stimulated measurements. In the
+#' @param y either a omics_array object or a list of strings. In the first
+#' case, the omics_array object represents the stimulated measurements. In the
 #' second case, the list is the way to specify the contrast: \describe{
 #' \item{First element:}{ condition, condition&time or pattern. The condition
 #' specification is used when the overall is to compare two conditions.  The
@@ -570,7 +568,7 @@ setMethod(f="unsupervised_clustering",
 #' @param f.asso function used to assess the association between the genes. 
 #' The default value `NULL` implies the use of the usual `mean` function. 
 #' @param return.diff [FALSE] if TRUE then the function returns the stimulated expression of the differentially expressed genes 
-#' @return A micro_array object.
+#' @return A omics_array object.
 #' @author Frédéric Bertrand , Myriam Maumy-Bertrand.
 #' @keywords methods
 #' @examples
@@ -578,9 +576,9 @@ setMethod(f="unsupervised_clustering",
 #' \donttest{
 #'   if(require(CascadeData)){
 #' 	data(micro_US)
-#' 	micro_US<-as.micro_array(micro_US,time=c(60,90,210,390),subject=6)
+#' 	micro_US<-as.omics_array(micro_US,time=c(60,90,210,390),subject=6)
 #' 	data(micro_S)
-#' 	micro_S<-as.micro_array(micro_S,time=c(60,90,210,390),subject=6)
+#' 	micro_S<-as.omics_array(micro_S,time=c(60,90,210,390),subject=6)
 #' 
 #'   #Basically, to find the 50 more significant expressed genes you will use:
 #'   Selection_1<-geneSelection(x=micro_S,y=micro_US,
@@ -603,9 +601,9 @@ setMethod(f="unsupervised_clustering",
 #' 
 #'   if(require(CascadeData)){
 #' data(micro_US)
-#' micro_US<-as.micro_array(micro_US,time=c(60,90,210,390),subject=6)
+#' micro_US<-as.omics_array(micro_US,time=c(60,90,210,390),subject=6)
 #' data(micro_S)
-#' micro_S<-as.micro_array(micro_S,time=c(60,90,210,390),subject=6)
+#' micro_S<-as.omics_array(micro_S,time=c(60,90,210,390),subject=6)
 #' #Genes with differential expression at t1
 #' Selection1<-geneSelection(x=micro_S,y=micro_US,20,wanted.patterns= rbind(c(1,0,0,0)))
 #' #Genes with differential expression at t2
@@ -618,7 +616,7 @@ setMethod(f="unsupervised_clustering",
 #' Selection5<-geneSelection(x=micro_S,y=micro_US,20)
 #' 
 #' #We then merge these selections:
-#' Selection<-unionMicro(list(Selection1,Selection2,Selection3,Selection4,Selection5))
+#' Selection<-unionOmics(list(Selection1,Selection2,Selection3,Selection4,Selection5))
 #' print(Selection)
 #' 
 #' #Prints the correlation graphics Figure 4:
@@ -648,7 +646,7 @@ setMethod(f="unsupervised_clustering",
 #' 
 setMethod(
   f = "geneSelection",
-  signature = c("micro_array", "micro_array", "numeric"),
+  signature = c("omics_array", "omics_array", "numeric"),
   definition = function(x,
                         y,
                         tot.number,
@@ -660,7 +658,7 @@ setMethod(
                         Design = NULL,
                         lfc = 0) {
     warnings(
-      "The use of the geneSelection with signature c(micro_array,micro_array) is depreciated",
+      "The use of the geneSelection with signature c(omics_array,omics_array) is depreciated",
       immediate. = TRUE
     )
     if (!is.null(sessionInfo()$otherPkgs$limma$Version)) {
@@ -693,11 +691,11 @@ setMethod(
     require(limma)
     
     if (data_log == TRUE) {
-      M1_mic <- log(M1@microarray)
-      M2_mic <- log(M2@microarray)
+      M1_mic <- log(M1@omicsarray)
+      M2_mic <- log(M2@omicsarray)
     } else{
-      M1_mic <- (M1@microarray)
-      M2_mic <- (M2@microarray)
+      M1_mic <- (M1@omicsarray)
+      M2_mic <- (M2@omicsarray)
     }
     
     if (is.null(rownames(M1_mic))) {
@@ -936,8 +934,8 @@ setMethod(
     
     M <-
       new(
-        "micro_array",
-        microarray = MM1,
+        "omics_array",
+        omicsarray = MM1,
         name = M1@name[r3(choix)],
         gene_ID = M1@gene_ID[r3(choix)],
         time = M1@time,
@@ -1006,11 +1004,11 @@ setMethod(
     
     if (data_log == TRUE) {
       for (i in 1:n) {
-        M_mic[[i]] <- log(M[[i]]@microarray) / log(2)
+        M_mic[[i]] <- log(M[[i]]@omicsarray) / log(2)
       }
     } else{
       for (i in 1:n) {
-        M_mic[[i]] <- (M[[i]]@microarray)
+        M_mic[[i]] <- (M[[i]]@omicsarray)
       }
     }
     
@@ -1323,8 +1321,8 @@ setMethod(
     }
     M <-
       new(
-        "micro_array",
-        microarray = MM1,
+        "omics_array",
+        omicsarray = MM1,
         name = row.names(MM1),
         gene_ID = gene_ID,
         time = M[[contrast[[2]][2]]]@time,
@@ -1343,7 +1341,7 @@ setMethod(
 
 #' @rdname geneSelection
 setMethod(f="genePeakSelection", 
-          signature=c("micro_array","numeric"),
+          signature=c("omics_array","numeric"),
           definition=function(x,peak,y=NULL,data_log=TRUE,durPeak=c(1,1),abs_val=TRUE,alpha_diff=0.05){
             
             M1<-x
@@ -1351,7 +1349,7 @@ setMethod(f="genePeakSelection",
             Select<-geneSelection(M1,tot.number=-1,M2,data_log=data_log,peak=peak)
             
             if(abs_val==FALSE){
-              M<-Select@microarray
+              M<-Select@omicsarray
               sel<-rep(0,length(M[,1]))
               comp<-M[,(1:M1@subject-1)*length(M1@time)+peak]
               test1<-function(y){
@@ -1386,7 +1384,7 @@ setMethod(f="genePeakSelection",
               #print(uu)
               N1<-Select@name[sel==uu]
               
-              M<--Select@microarray
+              M<--Select@omicsarray
               sel<-rep(0,length(M[,1]))
               comp<-M[,(1:M1@subject-1)*length(M1@time)+peak]
               test1<-function(y){
@@ -1421,11 +1419,11 @@ setMethod(f="genePeakSelection",
               #N2<-Select2@name
               
               N<-c(N1,N11)
-              Mi<-new("micro_array",microarray=Select@microarray[which(Select@name %in% N ),],name=N,gene_ID=Select@gene_ID[which(Select@name %in% N ),],time=M1@time,subject=M1@subject,start_time=Select@start_time[which(Select@name %in% N)],group=rep(peak,length(N)))			
+              Mi<-new("omics_array",omicsarray=Select@omicsarray[which(Select@name %in% N ),],name=N,gene_ID=Select@gene_ID[which(Select@name %in% N )],time=M1@time,subject=M1@subject,start_time=Select@start_time[which(Select@name %in% N)],group=rep(peak,length(N)))			
               return(Mi)
             } 		
             else{
-              M<-abs(Select@microarray)
+              M<-abs(Select@omicsarray)
               sel<-rep(0,length(M[,1]))
               comp<-M[,(1:M1@subject-1)*length(M1@time)+peak]
               test1<-function(y){
@@ -1460,7 +1458,7 @@ setMethod(f="genePeakSelection",
               #N2<-Select2@name
               
               
-              Mi<-new("micro_array",microarray=Select@microarray[which(Select@name %in% N ),],name=N,gene_ID=Select@gene_ID[which(Select@name %in% N ),],time=M1@time,subject=M1@subject,group=rep(peak,length(N)),start_time=Select@start_time[which(Select@name %in% N)])	
+              Mi<-new("omics_array",omicsarray=Select@omicsarray[which(Select@name %in% N ),],name=N,gene_ID=Select@gene_ID[which(Select@name %in% N )],time=M1@time,subject=M1@subject,group=rep(peak,length(N)),start_time=Select@start_time[which(Select@name %in% N)])	
               
               
             }
@@ -1471,25 +1469,25 @@ setMethod(f="genePeakSelection",
 )
 
 
-#' Makes the union between two micro_array objects.
+#' Makes the union between two omics_array objects.
 #' 
-#' Makes the union between two micro_array objects.
+#' Makes the union between two omics_array objects.
 #' 
 #' 
-#' @name unionMicro-methods
-#' @aliases unionMicro unionMicro-methods
-#' unionMicro,micro_array,micro_array-method unionMicro,list,ANY-method
+#' @name unionOmics-methods
+#' @aliases unionOmics unionOmics-methods
+#' unionOmics,omics_array,omics_array-method unionOmics,list,ANY-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
-#' \item{list("signature(M1 = \"micro_array\", M2 = \"micro_array\")")}{
-#' Returns a micro_array object which is the union of M1 and M2.  }
+#' \item{list("signature(M1 = \"omics_array\", M2 = \"omics_array\")")}{
+#' Returns a omics_array object which is the union of M1 and M2.  }
 #' 
-#' \item{list("signature(M1 = \"list\", M2 = \"ANY\")")}{ Returns a micro_array
+#' \item{list("signature(M1 = \"list\", M2 = \"ANY\")")}{ Returns a omics_array
 #' object which is the union of the elements of M1.  } }
 #' 
-#' @param M1 a micro-array or a list of micro-arrays
-#' @param M2 a micro-array or nothing if M1 is a list of micro-arrays
+#' @param M1 a omics-array or a list of omics-arrays
+#' @param M2 a omics-array or nothing if M1 is a list of omics-arrays
 #' 
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords methods
@@ -1497,32 +1495,32 @@ setMethod(f="genePeakSelection",
 #' 
 #' if(require(CascadeData)){
 #' data(micro_S, package="CascadeData")
-#' #Create another microarray object with 100 genes
-#' Mbis<-M<-as.micro_array(micro_S[1:100,],1:4,6)
+#' #Create another omicsarray object with 100 genes
+#' Mbis<-M<-as.omics_array(micro_S[1:100,],1:4,6)
 #' #Rename the 100 genes
 #' Mbis@name<-paste(M@name,"bis")
-#' rownames(Mbis@microarray) <- Mbis@name
-#' #Union (merge without duplicated names) of the two microarrays. 
-#' str(unionMicro(M,Mbis))
+#' rownames(Mbis@omicsarray) <- Mbis@name
+#' #Union (merge without duplicated names) of the two omicsarrays. 
+#' str(unionOmics(M,Mbis))
 #' }
 #' 
-setMethod(f="unionMicro", 
-          signature=c("micro_array","micro_array"),
+setMethod(f="unionOmics", 
+          signature=c("omics_array","omics_array"),
           definition=function(M1,M2){
             
             
             
-            nom1<-rownames(M1@microarray)
-            nom2<-rownames(M2@microarray)
+            nom1<-rownames(M1@omicsarray)
+            nom2<-rownames(M2@omicsarray)
             corres<-cbind(c(M1@name,M2@name),c(nom1,nom2))
             corres<-unique(unique(corres,MARGIN=2))
             corres2<-cbind(c(M1@gene_ID,M2@gene_ID),c(nom1,nom2))
             corres2<-unique(unique(corres2,MARGIN=2))
             NOM<-unique(c(nom1,nom2))
             n<-length(NOM)
-            m1<-M1@microarray[which(nom1 %in% NOM),]
+            m1<-M1@omicsarray[which(nom1 %in% NOM),]
             NOM2<-NOM[-which(nom1 %in% NOM)]
-            m2<-M2@microarray[which(nom2 %in% NOM2),]		
+            m2<-M2@omicsarray[which(nom2 %in% NOM2),]		
             M<-rbind(m1,m2)
             
             gr1<-M1@group[which(nom1 %in% NOM)]
@@ -1531,20 +1529,20 @@ setMethod(f="unionMicro",
             str1<-M1@start_time[which(nom1 %in% NOM)]
             str2<-M2@start_time[which(nom2 %in% NOM2)]
             str<-c(str1,str2)
-            rep<-new("micro_array",microarray=M,name=corres[,1],gene_ID=corres2[,1],time=M1@time,subject=M1@subject,group=gr,start_time=str)
+            rep<-new("omics_array",omicsarray=M,name=corres[,1],gene_ID=corres2[,1],time=M1@time,subject=M1@subject,group=gr,start_time=str)
             return(rep)
           }
           
 ) 
 
-setMethod(f="unionMicro", 
+setMethod(f="unionOmics", 
           signature=c("list","ANY"),
           definition=function(M1,M2){
             
-            rep<-unionMicro(M1[[1]],M1[[1]])
+            rep<-unionOmics(M1[[1]],M1[[1]])
             if(length(M1)>1){	
               for(i in 2:length(M1)){
-                rep<-unionMicro(rep,M1[[i]])
+                rep<-unionOmics(rep,M1[[i]])
                 
               }
             }
@@ -1561,10 +1559,10 @@ setMethod(f="unionMicro",
 #' 
 #' 
 #' @aliases clustExploration clustExploration-methods
-#' clustExploration,micro_array-method
-#' @param microarray A microarray to cluster
+#' clustExploration,omics_array-method
+#' @param omicsarray A omicsarray to cluster
 #' @param new.window Boolean. New X11 window for plots. Defaults to FALSE.
-#' @return A data.frame of nrows(microarray) observations of 3 variables (name,
+#' @return A data.frame of nrows(omicsarray) observations of 3 variables (name,
 #' cluster, maj.vote.index).
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords cluster
@@ -1573,19 +1571,19 @@ setMethod(f="unionMicro",
 #' library(Patterns)
 #' if(require(CascadeData)){
 #' data(micro_S, package="CascadeData")
-#' D<-Patterns::as.micro_array(micro_S[1:100,],1:4,6)
+#' D<-Patterns::as.omics_array(micro_S[1:100,],1:4,6)
 #' a<-clustExploration(D)
 #' a
 #' }
 #' 
 setMethod(f="clustExploration", 
-          signature=c("micro_array"),
-          definition=function(microarray,new.window=FALSE){
+          signature=c("omics_array"),
+          definition=function(omicsarray,new.window=FALSE){
   
   require("Mfuzz", quietly = TRUE, warn.conflicts = FALSE)
-  T<-length(microarray@time)
-  P<-microarray@subject
-  M1<-microarray@microarray
+  T<-length(omicsarray@time)
+  P<-omicsarray@subject
+  M1<-omicsarray@omicsarray
   
   M<-M1[,1:T]
   for(i in 2:P ){
@@ -1639,7 +1637,7 @@ setMethod(f="clustExploration",
   }
   
   
-  return(data.frame(name=microarray@name,cluster=amv,maj.vote.index=amind))
+  return(data.frame(name=omicsarray@name,cluster=amv,maj.vote.index=amind))
   
   
 }  
@@ -1653,12 +1651,12 @@ setMethod(f="clustExploration",
 #' 
 #' 
 #' @aliases clustInference clustInference-methods
-#' clustInference,micro_array,numeric-method
-#' @param microarray A microarray to cluster
+#' clustInference,omics_array,numeric-method
+#' @param omicsarray A omicsarray to cluster
 #' @param vote.index Option for cluster attribution
 #' @param new.window Boolean. New X11 window for plots. Defaults to FALSE.
 #' @return A list of two elements: \item{res.matrix}{A data.frame of
-#' nrows(microarray) observations of 3 variables (name, cluster,
+#' nrows(omicsarray) observations of 3 variables (name, cluster,
 #' maj.vote.index).} \item{prop.matrix}{Additionnal info.}
 #' @author Bertrand Frederic, Myriam Maumy-Bertrand.
 #' @keywords cluster
@@ -1667,19 +1665,19 @@ setMethod(f="clustExploration",
 #' library(Patterns)
 #' if(require(CascadeData)){
 #' data(micro_S, package="CascadeData")
-#' D<-Patterns::as.micro_array(micro_S[1:20,],1:4,6)
+#' D<-Patterns::as.omics_array(micro_S[1:20,],1:4,6)
 #' b<-Patterns::clustInference(D,0.5)
 #' b
 #' }
 #' 
 setMethod(f="clustInference", 
-          signature=c("micro_array","numeric"),
-          definition=function(microarray,vote.index,new.window=FALSE){  
+          signature=c("omics_array","numeric"),
+          definition=function(omicsarray,vote.index,new.window=FALSE){  
   require("Mfuzz", quietly = TRUE, warn.conflicts = FALSE)
             
-  T<-length(microarray@time)
-  P<-microarray@subject
-  M1<-microarray@microarray
+  T<-length(omicsarray@time)
+  P<-omicsarray@subject
+  M1<-omicsarray@omicsarray
   
   M<-M1[,1:T]
   for(i in 2:P ){
@@ -1762,7 +1760,7 @@ setMethod(f="clustInference",
   }
   
   
-  return(res.matrix=list(data.frame(name=microarray@name,cluster=amv,maj.vote.index=amind),prop.matrix=prop.matrix))
+  return(res.matrix=list(data.frame(name=omicsarray@name,cluster=amv,maj.vote.index=amind),prop.matrix=prop.matrix))
   
   
 }  

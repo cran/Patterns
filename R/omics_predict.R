@@ -1,6 +1,6 @@
 #' @rdname plot-methods
 setMethod("plot"
-          ,c("micropredict")
+          ,c("omics_predict")
           ,function(x
                     ,time=NULL
                     ,label_v=NULL
@@ -9,13 +9,13 @@ setMethod("plot"
                     ,label.hub=FALSE
                     ,edge.arrow.size=0.7
                     ,edge.thickness=1){
-            net<-x@network
-            micro<-x@microarray_changed
+            net<-x@omics_network
+            omics<-x@omicsarray_changed
             nv<-x@nv
-            micro_pred<-x@microarray_predict
+            omics_pred<-x@omicsarray_predict
             targets<-x@targets
-            O<-net@network
-            Omega<-net@network
+            O<-net@omics_network
+            Omega<-net@omics_network
             O[abs(O)<nv]<-0
             O[abs(O)>=nv]<-1
             if(is.null(label_v)){label_v<-1:dim(O)[1]}
@@ -33,17 +33,17 @@ setMethod("plot"
             }
             
             if(is.null(time)){
-              K<-2:(length(micro@time))
+              K<-2:(length(omics@time))
             }
             else{K<-time}
             for(time in K){
               #if(length(K)>1){
                 #if(!attr(dev.cur(),"names")=="pdf"){dev.new()}
               #}
-              if(time==length(micro@time)){time<-0}
-              sup_pred<-1:dim(micro@microarray)[2]
-              sup_pred<-sup_pred[sup_pred%%length(micro@time)==time]
-              M<-apply(micro@microarray[,sup_pred]-micro_pred@microarray[,sup_pred],1,mean)
+              if(time==length(omics@time)){time<-0}
+              sup_pred<-1:dim(omics@omicsarray)[2]
+              sup_pred<-sup_pred[sup_pred%%length(omics@time)==time]
+              M<-apply(omics@omicsarray[,sup_pred]-omics_pred@omicsarray[,sup_pred],1,mean)
               
               maxi<-round(max(abs(M[-targets])),2)
               if(max(abs(M))!=0){M<-M/max(abs(M[-targets]))}
@@ -74,7 +74,7 @@ setMethod("plot"
               text(-1,-1.05,-maxi)
               text(-0.51,-1.05,maxi)
               text(-0.751,-1.05,"0")	
-              if(time==0){time<-length(micro@time)}
+              if(time==0){time<-length(omics@time)}
               text(-0.8,1.1,paste("Time point prediction =",time, sep=" "))
             }
             
