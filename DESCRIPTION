@@ -2,15 +2,15 @@ Package: Patterns
 Type: Package
 Title: Deciphering Biological Networks with Patterned Heterogeneous
         Measurements
-Version: 1.4
-Date: 2022-11-29
+Version: 1.5
+Date: 2024-05-03
 Depends: R (>= 3.5.0)
 biocViews:
-Imports: abind, gplots, graphics, grDevices, igraph, jetset, lars,
-        lattice, limma, methods, Mfuzz, movMF, nnls, plotrix, repmis,
-        SelectBoost, tnet, VGAM, WGCNA
-Suggests: animation, Biobase, c060, cluster, elasticnet, glmnet,
-        pixmap, biomaRt, CascadeData, knitr, R.rsp, spls, rmarkdown
+Imports: abind, cluster, e1071, gplots, graphics, grDevices, igraph,
+        jetset, lars, lattice, limma, methods, Mfuzz, movMF, nnls,
+        plotrix, repmis, SelectBoost, tnet, VGAM, WGCNA
+Suggests: animation, Biobase, biomaRt, c060, CascadeData, elasticnet,
+        glmnet, knitr, pixmap, R.rsp, rmarkdown, spls
 Authors@R: c(
 	person(given = "Frederic", family= "Bertrand", role = c("cre", "aut"), email = "frederic.bertrand@utt.fr", comment = c(ORCID = "0000-0002-0837-8281")),
 	person(given = "Myriam", family= "Maumy-Bertrand", role = c("aut"), email = "myriam.maumy-bertrand@utt.fr", comment = c(ORCID = "0000-0002-4615-1512")))
@@ -24,11 +24,11 @@ Collate: Patterns-package.R global.R datasets.R omics_array.R
         omics_network.R omics_array-omics_network.R omics_predict.R
 Classification/MSC: 62J05, 62J07, 62J99, 92C42
 VignetteBuilder: knitr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.1
 URL: https://fbertran.github.io/Patterns/,
         https://github.com/fbertran/Patterns/
 BugReports: https://github.com/fbertran/Patterns/issues/
 NeedsCompilation: no
-Packaged: 2022-11-29 23:00:08 UTC; fbertran
+Packaged: 2024-05-03 23:32:19 UTC; fbertran
 Repository: CRAN
-Date/Publication: 2022-12-01 13:10:05 UTC
+Date/Publication: 2024-05-06 13:40:02 UTC

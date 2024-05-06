@@ -85,11 +85,17 @@ plotF(network@F, choice='F')
 #  save(list=c("selection"),file="selection.RData")
 #  save(list=c("infos"),file="infos.RData")
 
-## ----HumanTFDB, warning=FALSE, cache=TRUE, eval = LOCAL-----------------------
-doc <- read.delim("http://bioinfo.life.hust.edu.cn/static/AnimalTFDB3/download/Homo_sapiens_TF",encoding = "UTF-8", header=TRUE)
-
+## ----HumanTFDBfailsafe, warning=FALSE, cache=TRUE, include=FALSE, eval = LOCAL----
+getTF <- FALSE
+try({doc <- read.delim("http://bioinfo.life.hust.edu.cn/static/AnimalTFDB3/download/Homo_sapiens_TF",encoding = "UTF-8", header=TRUE); getTF <- TRUE}, silent = TRUE)
+if(!getTF){data(doc)}
 TF<-as.character(doc[,"Symbol"])
 TF<-TF[order(TF)]
+
+## ----HumanTFDB, warning=FALSE, cache=TRUE, eval = FALSE-----------------------
+#  doc <- read.delim("http://bioinfo.life.hust.edu.cn/static/AnimalTFDB3/download/Homo_sapiens_TF",encoding = "UTF-8", header=TRUE)
+#  TF<-as.character(doc[,"Symbol"])
+#  TF<-TF[order(TF)]
 
 ## ----TFinsel, warning=FALSE, cache=TRUE, eval = LOCAL-------------------------
 infos_selection <- infos[infos$affy_hg_u133_plus_2 %in% selection@name,]

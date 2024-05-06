@@ -8,10 +8,10 @@ knitr::opts_chunk$set(
   fig.width=5
 )
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  install.packages("Patterns")
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  devtools::install_github("fbertran/Patterns")
 
 ## ----omicsarrayclass, message=FALSE, warning=FALSE, eval = LOCAL--------------
